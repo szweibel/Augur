@@ -1,6 +1,6 @@
 ## Augur
-***
-Augur is a webapp for tracking reference desk statistics for libraries, inspired by libstats. It was written in Python and Javascript.   
+
+Augur is a webapp for tracking reference desk statistics for libraries, inspired by libstats. It was written in Python and Javascript.
 
 In Ubuntu:
 
@@ -20,7 +20,7 @@ mysql -u root -p
 
 create database refstatsdb;
 
-git clone https://github.com/Zwounds/refstats.git
+git clone https://github.com/Zwounds/Augur.git
 
 pip install -r requirements.txt
 
