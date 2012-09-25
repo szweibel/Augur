@@ -1,0 +1,127 @@
+{% extends "layout.html" %}
+{% block body %}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='daterange/bootstrap-datepicker.css')}}">
+<script type="text/javascript" src="{{url_for('static', filename='Loadingdotdotdot/js/jquery.loadingdotdotdot.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='daterange/bootstrap-datepicker.js')}}"></script>
+<script type="text/javascript">
+jQuery(document).ready(function() {
+$('#reportrange').datepicker({
+    noOffset: false,
+});
+$('#reportrange2').datepicker({
+    noOffset: false,
+});
+$('#CSV').click(function() {
+    $("#chart_format").attr("action", "{{ url_for('data') }}");
+    $("#chart_format").submit();
+});
+
+});
+</script>
+<div class="row-fluid">
+<div class="header">
+    <h3>{{ metatag.choice }}</h3>
+</div>
+<p></p>
+    <div class="pull-right row-fluid">
+        <form action="{{ url_for('show_tag', tag_id=metatag.id ) }}" class="form-inline" id="chart_format" method="post">
+            <div> <i class="icon-calendar icon-large"></i>
+                <label>Show data from:</label>
+                <input id="reportrange" value='{{start_date}}' name="start_date">
+                <label>To:</label>
+                <input id="reportrange2" value='{{end_date}}' name="end_date">
+                <input name="save" type="submit" value="Chart!" class="btn btn-primary" />
+                <input name="download" type="submit" value="Save as CSV" id='CSV' class="btn btn-search" />
+            </div>
+        </form>
+        <div class='row-fluid'><p>Total number of events with this tag: {{ the_count }}</p>
+        </div>
+   </div>
+</div>
+
+<div class='row-fluid'>
+    <div class='header'>
+        <h3>Items Tagged With {{ metatag.choice }}</h3>
+    </div>
+    <p></p>
+    {% for message in metatag.messages %}
+<script type="text/javascript">
+$(document).ready(function() {
+$('#messageclick{{message.id}}').click(function() {
+jQuery("#message{{ message.id }}").submit();
+});
+});
+</script>
+<div class='row-fluid'>
+    <form action="/admindelete" id="message{{ message.id }}" method="post">
+        <div class="knowledge-post" type="text">
+            {% if message.title %}
+                    <h3 class='post-header'>{{ message.title|safe }}</h3>
+            {% endif %}
+            <p>{{ message.message|safe }}</p>
+
+            <h5>
+            {% for tag in message.message_tags %}
+            <a href="../tag/{{ tag.id }}">{{ tag.choice }} ·</a>
+            {% endfor %}
+            </h5>
+            <p>
+                        <em>By {{ message.author }}</em>
+                        <a data-toggle="modal" class='pull-right' href="#new_email"><i class="icon-envelope icon-large"></i></a>    
+                        {% if message.promoted == True %}
+                        <a href="/promote/{{message.id}}" class='pull-right'> <i class="icon-star icon-large"></i>
+                        </a>   
+                        {% else %}
+                        <a href="/promote/{{message.id}}" class='pull-right'> <i class="icon-star-empty icon-large"></i>
+                        </a>   
+                        {% endif %}
+                        {% if current_user.has_role('admin') %}
+                        <a href="/edit/{{ message.id }}" class='pull-right'><i class="icon-wrench icon-large"></i></a>    
+                        <a name="delete" class='pull-right' href=# id='messageclick{{message.id}}'><i class='icon-trash icon-large'></i>
+                        </a>
+                </p>
+                    {% else %}
+                        {% if current_user.username == message.author %}
+                        <a href="/edit/{{ message.id }}"><i class="icon-wrench icon-large"></i></a>    
+                    <a name="delete" href=# id='messageclick{{message.id}}'><i class='icon-trash icon-large'></i></a>
+                </p>
+                {% endif %}
+                        {% endif %}
+        </div>
+        <input type="hidden" name="no" value="{{message.id}}">
+        <input type="hidden" name="table" value="messages"></form>
+</div>
+
+<div id="new_email" class="modal hide fade in" style="display: none; ">
+        <div class="modal-header">
+            <a class="close" data-dismiss="modal">×</a>
+            <h3>Email this message.</h3>
+        </div>
+        <div class="modal-body">
+            <form action="/email" class="new_email" id="new_email" method="post">
+                <input type="hidden" name="body" value="{{message.message}}">
+                <input type="hidden" name="title" value="{{message.title}}">
+                <p>
+                    To:
+                    <input type="text" name="recipient"></p>
+            </div>
+            <div class="modal-footer">
+                <input name="save" type="submit" value="Email" class="btn btn-success" />
+            </form>
+            <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+        </div>
+</div>
+{%endfor%}
+
+<script type='text/javascript' src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='chosen/chosen.jquery.min.js')}}"></script>
+<script type='text/javascript' src="{{ url_for('static', filename='ckeditor/adapters/jquery.js') }}"></script>
+<script type="text/javascript">
+jQuery(document).ready(function(){
+  jQuery("#chosen").chosen();
+  jQuery("#editor").ckeditor(function(){},{height:120});
+});
+</script>
+
+</div>
+{% endblock %}

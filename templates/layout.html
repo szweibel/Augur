@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+<meta name="description" content="Reference Desk Statistics">
+<meta name="author" content="SZ">
+{#
+<link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}">
+#}
+<title>Augur</title>
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='chosen/chosen.css')}}">
+<link rel="stylesheet"  type="text/css" href="{{url_for('static', filename='bootstrap/css/bootstrap.css')}}">
+<link rel="stylesheet"  type="text/css" href="{{url_for('static', filename='bootstrap/css/bootstrap-responsive.css')}}" media="only screen and (max-width: 480px)">
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css')}}" media="screen and (min-width: 481px)">
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='android.css')}}" media="only screen and (max-width: 480px)" />
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='jqplot/jquery.jqplot.min.css')}}">
+<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/themes/base/jquery-ui.css">
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript" src="{{url_for('static', filename='bootstrap/js/bootstrap.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='knockout-2.1.0.js')}}"></script>
+
+<script type="text/javascript">
+    jQuery(document).ready(function($) {
+        jQuery("#library_selector").change(function() {
+        jQuery("#choose_library_cookie").submit();
+        });
+        $('.popup').tooltip()
+        $('.alert').delay(5000).fadeOut();
+    });
+</script>
+</head>
+<body>
+<div class="navbar container">
+    <div class='navbar-inner'>
+            <h1>
+                <a class='brand' href="{{ url_for('show_entries', library_id=the_library_id) }}" title="Home">Augur</a>
+            </h1>
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <div class='nav-collapse'>
+                <ul class='nav pull-right'>
+                    {% if current_user.has_role('admin') %}
+                    <li>
+                        <form action='/change_library' id='choose_library_cookie' class='navbar-form' method='post'>
+                            <input type='hidden' value='{{request.endpoint}}' name='which_page'>
+                            <select id="library_selector" name='which_library_id'>
+                                {% for library in libraries %}
+                            {% if the_library == library.name %}
+                                <option selected='selected' value="{{ library.id }}">{{ library.name }}</option>
+                                {% else %}
+                                <option value="{{ library.id }}">{{ library.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                            </select>
+                        </form>
+                    </li>
+                    {% else %}
+                    <li>
+                        <form action='/change_library' id='choose_library_cookie' class='select-long' method='post'>
+                            <input type='hidden' value='{{request.endpoint}}' name='which_page'>
+                            <select id="library_selector" class='select-long' name='which_library_id'>
+                                {% for library in libraries %}
+                            {% if the_library == library.name %}
+                                <option selected='selected' value="{{ library.id }}">{{ library.name }}</option>
+                                {% else %}
+                                <option value="{{ library.id }}">{{ library.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                            </select>
+                        </form>
+                    </li>
+                    {% endif %}
+                    <li>
+                        <a href="{{ url_for('show_entries', library_id=the_library_id) }}" title="Home"> <strong>Log an Event</strong>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('knowledge_base') }}" title="Knowledge Base"> <strong>Knowledge Base</strong>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('charts') }}" title="Statistics">
+                            <strong>Statistics</strong>
+                        </a>
+                    </li>
+                    {% if current_user.has_role('admin') %}
+                    <li class='pull-right'>
+                        <a href="{{ url_for('admin') }}" title="Admin">
+                            <strong>Admin</strong>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if current_user.has_role('admin') or current_user.has_role('user') %}
+                    <li>
+                        <a href="{{ url_for('auth.logout') }}">
+                            <strong>Logout</strong>
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li>
+                        <form action="/knowledgebase" class="navbar-form" method="post">
+                            <input type="text" name='search' class=" span2">
+                            <button type="submit" class="btn btn-success">Search</button></form>
+                    </li>
+                </ul>
+            </div>
+    </div>
+</div>
+{% for message in get_flashed_messages() %}
+<div class="alert alert-success container">
+<div>
+  <button type="button" href="#" class="close" data-dismiss="alert">×</button>
+  {{message}}
+</div>
+</div>
+{% endfor %}
+<div class="container">{% block body %}{% endblock %}</div>
+</body>
+</html>

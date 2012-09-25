@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class='row-fluid'>
+    <p>{{ cookie }}</p>
+<div class="header">
+                <h3>All Events</h3>
+            </div>
+            <table  class="table table-condensed table-bordered table-striped" border="1">
+                <thead>
+                    <tr>
+                        <td>Time</td>
+                        {%for subject in subjects %}
+                    {% if subject.metatag == False %}
+                        <td>{{subject.name}}</td>
+                        {%endif%}
+                    {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in events %}
+                    <tr>
+                        <td>{{ event.time }}</td>
+                        {% for tag in event.tags %} 
+                        {% if tag.subject.metatag == False %}
+                        <td>{{ tag.choice }}</td>
+                        {%endif%}
+                        {% endfor %}
+                        <td>
+                            <form action="/adminedit" id="delete" method="post">
+                                <input type="hidden" name="no" value="{{ event.id }}">
+                                <input type="hidden" name="table" value="questions">
+                                <input type="submit" name="delete" value="delete"></form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+{% endblock %}

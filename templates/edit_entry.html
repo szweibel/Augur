@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+{% block body %}
+    <div id="edit_message" class="modal">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>Edit Message</h3>
+    </div>
+    <div class="modal-body">
+        <form action="/edit/{{ message.id }}" class="form-inline" id="edit_message" method="post">
+            <label class='control-label' for='message_title'>Title:</label>
+            <input class="input-large" id="message_title" type="text" 
+            {% if message.title %}
+            value='{{message.title}}' 
+            {% endif %}
+            name="title"/>
+            <label class='control-label' for='chosen2'>Tags:</label>
+            <select class="input-large chzn-select" data-placeholder="Choose some tags..." multiple="true" id="chosen2" name="tags">
+                {% for subject in subjects %}
+                        {% if subject.metatag == True %}
+                        
+                <option class="headoption" 
+                {% for tag in message.message_tags %}
+                {% if subject.name == tag.choice %}
+                selected='selected'
+                {%endif%}
+                {%endfor%}
+                name="tags">{{subject.name}}</option>
+                {%for choice in subject.choices %}
+                        {% if choice.metatag == False %}
+                <option class="suboption"
+                {% for tag in message.message_tags %}
+                {% if tag == choice %}
+                selected='selected'
+                {%endif%}
+                {%endfor%}
+                 name="tags">{{choice.choice}}</option>
+                {%endif%}
+                        {%endfor%}
+                        {%endif%}
+                        {%endfor%}
+            </select>
+            <textarea type="text" id="editor" name='message' style="width:100%">{{ message.message|safe }}</textarea>
+            <label for='message'>Expiration:</label>
+            <select id="message" name="expire" size="3" tabindex="3">
+                <option value="1">One day</option>
+                <option value="7" selected="selected">One week</option>
+                <option value="30">One month</option>
+                <option value="100000">Indefinitely</option>
+            </select>
+            <input type="hidden" name="user" value="{{current_user.username}}">
+            <input type="hidden" name="message_id" value="{{ message.id }}">
+            <input type="hidden" name="date" value="{{day}}" />
+        </div>
+        <div class="modal-footer">
+            <input name="save" type="submit" value="Save" class="btn btn-success" />
+        </form>
+        <a href="{{ url_for('show_entries', library_id=the_library_id) }}" class="btn">Cancel</a>
+    </div>
+</div>
+
+<script type='text/javascript' src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='chosen/chosen.jquery.min.js')}}"></script>
+<script type='text/javascript' src="{{ url_for('static', filename='ckeditor/adapters/jquery.js') }}"></script>
+<script type="text/javascript">
+jQuery(document).ready(function(){
+  jQuery("#chosen").chosen();
+  jQuery("#chosen2").chosen();
+  jQuery("#editor").ckeditor(function(){},{height:120});
+});
+</script>
+
+{% endblock %}

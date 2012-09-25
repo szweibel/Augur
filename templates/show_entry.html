@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block body %}
+<p></p>
+<script type="text/javascript">
+$(document).ready(function() {
+$('#messageclick{{message.id}}').click(function() {
+jQuery("#message{{ message.id }}").submit();
+});
+});
+</script>
+
+        <div>
+            <form action="/admindelete" id="message{{ message.id }}" method="post">
+                <div class="post" type="text">
+                    {% if message.title %}
+                    <h3>{{ message.title|safe }}</h3>
+                    {% endif %}
+                    <p>{{ message.message|safe }}</p>
+                    <p>
+                        <p> <em>By {{ message.author }}</em></p>
+                        <p></p>
+                        <a data-toggle="modal" title="Email" class='pull-right popup' href="#new_email"><i class="icon-envelope icon-large"></i></a> &nbsp;&nbsp;&nbsp;
+                        {% if message.promoted == True %}
+                        <a href="/promote/{{message.id}}" title="Demote" class='pull-right popup'> <i class="icon-star icon-large"></i>
+                        </a> &nbsp;&nbsp;&nbsp;
+                        {% else %}
+                        <a href="/promote/{{message.id}}" title="Promote" class='pull-right popup'> <i class="icon-star-empty icon-large"></i>
+                        </a> &nbsp;&nbsp;&nbsp;
+                        {% endif %}
+                    {% if current_user.has_role('admin') %}
+                        <a href="/edit/{{ message.id }}" title="Edit" class='pull-right popup'><i class="icon-wrench icon-large"></i></a> &nbsp;&nbsp;&nbsp;
+                        <a name="delete" href=# title="Delete" class='pull-right popup' id='messageclick{{message.id}}'><i class='icon-trash icon-large'></i></a>
+                    </p>
+                    {% else %}
+                        {% if current_user.username == message.author %}
+                        <a href="/edit/{{ message.id }}" title="Edit" class='pull-right popup'><i class="icon-wrench"></i></a> &nbsp;&nbsp;&nbsp;
+                    <a name="delete" title="Delete" class='pull-right popup' href=# id='messageclick{{message.id}}'><i class='icon-trash'></i></a>
+                    </p>
+                {% endif %}
+                        {% endif %}
+            </div>
+            <input type="hidden" name="no" value="{{message.id}}">
+            <input type="hidden" name="table" value="messages"></form>
+    </div>
+
+{% endblock %}

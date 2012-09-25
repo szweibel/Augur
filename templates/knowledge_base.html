@@ -1,0 +1,131 @@
+{% extends "layout.html" %}
+{% block body %}
+<div id="new_message" class="modal hide fade in" style="display: none; ">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>New</h3>
+    </div>
+    <div class="modal-body">
+        <form action="/message" class="form-inline" id="new_message" method="post">
+            <label class='control-label' for='message_title'>Title:</label>
+            <input class="input-large" id="message_title" type="text" name="title"/>
+            <label class='control-label' for='chosen'>Tags:</label>
+            <select class="input-large chzn-select" data-placeholder="Choose some tags..." multiple="true" id="chosen" name="tags">
+                {%for subject in subjects %}
+                {%for choice in subject.choices %}
+                        {% if choice.metatag == True %}
+                <option class="headoption" value='{{ choice.id }}'>{{choice.choice}}</option>
+                {%for choice in subject.choices %}
+                        {% if choice.metatag == False %}
+                <option class="suboption" value='{{ choice.id }}'>{{choice.choice}}</option>
+                {%endif%}
+                        {%endfor%}
+                        {%endif%}
+                        {%endfor%}
+                        {%endfor%}
+            </select>
+            <textarea type="text" id='editor' name="message"></textarea>
+            <input type="hidden" name="page" value="knowledgebase" />
+            <input type="hidden" name="expire" value="-1" />
+            <input type="hidden" name="user" value="{{current_user.username}}">
+            <input type="hidden" name="date" value="{{day}}" />
+        </div>
+        <div class="modal-footer">
+            <input name="save" type="submit" value="Save" class="btn btn-success" />
+        </form>
+        <a href="#" class="btn" data-dismiss="modal">Close</a>
+    </div>
+</div>
+
+<div class="header">
+    <h3>Knowledge Base <a data-toggle="modal" href="#new_message" class="btn pull-right">New</a></h3> 
+</div>
+
+<div>
+    
+</div>
+<br/>
+{% for message in entries %}
+    {% if message.promoted == True %}
+    <script type="text/javascript">
+$(document).ready(function() {
+$('#messageclick{{message.id}}').click(function() {
+jQuery("#message{{ message.id }}").submit();
+});
+});
+</script>
+<div class='row-fluid'>
+    <form action="/admindelete" id="message{{ message.id }}" method="post">
+        <div class="knowledge-post" type="text">
+            {% if message.title %}
+                    <h3 class='post-header'>{{ message.title|safe }}</h3>
+            {% endif %}
+            <p>{{ message.message|safe }}</p>
+            
+            <h5>
+            {% for tag in message.message_tags %}
+            <a href="../tag/{{ tag.id }}">{{ tag.choice }} ·</a>
+            {% endfor %}
+            </h5>
+            <p>
+                        <em>By {{ message.author }}</em>
+                        <!-- <p>Tags: {% for tag in message.message_tags %} {{ tag }}, {% else %} None {% endfor %}</p> -->
+                        <a data-toggle="modal" class='pull-right' href="#new_email"><i class="icon-envelope icon-large"></i></a> &nbsp;&nbsp;&nbsp;
+                        {% if message.promoted == True %}
+                        <a href="/promote/{{message.id}}" class='pull-right'> <i class="icon-star icon-large"></i>
+                        </a>&nbsp;&nbsp;&nbsp;
+                        {% else %}
+                        <a href="/promote/{{message.id}}" class='pull-right'> <i class="icon-star-empty icon-large"></i>
+                        </a>&nbsp;&nbsp;&nbsp;
+                        {% endif %}
+                        {% if current_user.has_role('admin') %}
+                        <a href="/edit/{{ message.id }}" class='pull-right'><i class="icon-wrench icon-large"></i></a> &nbsp;&nbsp;&nbsp;
+                        <a name="delete" class='pull-right' href=# id='messageclick{{message.id}}'><i class='icon-trash icon-large'></i>
+                        </a>
+                </p>
+                    {% else %}
+                        {% if current_user.username == message.author %}
+                        <a href="/edit/{{ message.id }}"><i class="icon-wrench icon-large"></i></a> &nbsp;&nbsp;&nbsp;
+                    <a name="delete" href=# id='messageclick{{message.id}}'><i class='icon-trash icon-large'></i></a>
+                </p>
+                {% endif %}
+                        {% endif %}
+        </div>
+        <input type="hidden" name="no" value="{{message.id}}">
+        <input type="hidden" name="table" value="messages"></form>
+</div>
+
+<div id="new_email" class="modal hide fade in" style="display: none; ">
+        <div class="modal-header">
+            <a class="close" data-dismiss="modal">×</a>
+            <h3>Email this message.</h3>
+        </div>
+        <div class="modal-body">
+            <form action="/email" class="new_email" id="new_email" method="post">
+                <input type="hidden" name="body" value="{{message.message}}">
+                <input type="hidden" name="title" value="{{message.title}}">
+                <p>
+                    To:
+                    <input type="text" name="recipient"></p>
+            </div>
+            <div class="modal-footer">
+                <input name="save" type="submit" value="Email" class="btn btn-success" />
+            </form>
+            <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+        </div>
+    </div>
+
+
+{%endif%}
+{%endfor%}
+
+<script type='text/javascript' src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='chosen/chosen.jquery.min.js')}}"></script>
+<script type='text/javascript' src="{{ url_for('static', filename='ckeditor/adapters/jquery.js') }}"></script>
+<script type="text/javascript">
+jQuery(document).ready(function(){
+  jQuery("#chosen").chosen();
+  jQuery("#editor").ckeditor(function(){},{height:120});
+});
+</script>
+{% endblock %}

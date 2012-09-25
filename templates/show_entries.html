@@ -1,0 +1,273 @@
+{% extends "layout.html" %}
+{% block body %}
+<script type="text/javascript">var SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
+<script type="text/javascript">
+function updateClock ( )
+     {
+     var currentTime = new Date ( );
+     var currentHours = currentTime.getHours ( );
+     var currentMinutes = currentTime.getMinutes ( );
+     var currentSeconds = currentTime.getSeconds ( );
+
+     // Pad the minutes and seconds with leading zeros, if required
+     currentMinutes = ( currentMinutes < 10 ? "0" : "" ) + currentMinutes;
+     currentSeconds = ( currentSeconds < 10 ? "0" : "" ) + currentSeconds;
+
+     // Compose the string for display
+     var currentTimeString = currentHours + ":" + currentMinutes;
+     var displayDate = (currentTime.getFullYear()) + '-' + (currentTime.getMonth()+1) + '-' + currentTime.getDate() + ' ' + currentTimeString;
+
+
+     $("#clock").val(displayDate);
+
+ }
+ 
+$(document).ready(function()
+{
+   setInterval('updateClock()', 1000);
+$('#clock').click(function() {
+    jQuery("#clock").removeAttr('id');
+});
+});
+</script>
+<div id="new_message" class="modal hide fade in" style="display: none; ">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>New</h3>
+    </div>
+    <div class="modal-body">
+        <form action="/message" class="form-inline" id="new_message" method="post">
+            <label class='control-label' for='message_title'>Title:</label>
+            <input class="input-large" id="message_title" type="text" name="title"/>
+            <label class='control-label' for='chosen2'>Tags:</label>
+            <select class="input-large chzn-select" data-placeholder="Choose some tags..." multiple="true" id="chosen2" name="tags">
+                {%for subject in subjects %}
+                {%for choice in subject.choices %}
+                        {% if choice.metatag == True %}
+                <option class="headoption" value='{{ choice.id }}'>{{choice.choice}}</option>
+                {%for choice in subject.choices %}
+                        {% if choice.metatag == False %}
+                <option class="suboption" value='{{ choice.id }}'>{{choice.choice}}</option>
+                {%endif%}
+                        {%endfor%}
+                        {%endif%}
+                        {%endfor%}
+                        {%endfor%}
+            </select>
+            <textarea type="text" id='editor' name="message"></textarea>
+            <input type="hidden" name="page" value="homepage" />
+            <label for='message'>Expiration:</label>
+            <select id="message" name="expire" size="3" tabindex="3">
+                <option value="1">One day</option>
+                <option value="7" selected="selected">One week</option>
+                <option value="30">One month</option>
+                <option value="100000">Indefinitely</option>
+            </select>
+            <input type="hidden" name="user" value="{{current_user.username}}">
+            <input type="hidden" name="date" value="{{day}}" />
+        </div>
+        <div class="modal-footer">
+            <input name="save" type="submit" value="Save" class="btn btn-success" />
+        </form>
+        <a href="#" class="btn" data-dismiss="modal">Close</a>
+    </div>
+</div>
+
+<div class="row-fluid">
+    <div class="span7">
+        <div class="header">
+            <h3>Log an Event</h3>
+        </div>
+        <p></p>
+
+        <form action="/add" class="form" id="new_question" method="post" class='navbar-form'>
+            <input id="library" type="hidden" name='library' class="bacon" value="{{the_library}}">
+            {% for subject in subjects %}
+            {% for library in subject.libraries %}
+            {% if the_library == library.name %}
+                {% if subject.metatag == False %}
+            {% if library.subjects|count == 4 %}
+            <div class='span2 offset2 each_choice'>
+                {% elif library.subjects|count == 2 %}
+                <div class='span2 offset2 each_choice'>
+                    {% else %}
+                    <div class='span2 offset1 each_choice'>
+                        {% endif %}
+                        <span class='label'>{{subject.name}}</span>
+                        <select id="{{subject.name}}_id" name="values" size="5" >
+                            {% for choice in subject.choices %}
+                            <option value="{{choice.id}}" name="values">{{choice.choice}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    {% endif %}
+                    {% endif %}
+                    {% endfor %}
+                    {% endfor %}
+                    <div class="span12">
+                        Tags:
+                        <select class="input-large chzn-select" data-placeholder="Choose some tags..." multiple="true" id="chosen" name="values">
+                            {%for subject in subjects %}
+                {%for choice in subject.choices %}
+                        {% if choice.metatag == True %}
+                            <option class="headoption" name="values" value='{{ choice.id }}'>{{choice.choice}}</option>
+                            {%for choice in subject.choices %} 
+                        {% if choice.metatag == False %}
+                            <option class="suboption" name="values" value='{{ choice.id }}'>{{choice.choice}}</option>
+                            {%endif%}
+                        {%endfor%}
+                        {%endif%}
+                        {%endfor%}
+                        {%endfor%}
+                        </select>
+                        Time:
+                        <input type="text" class="input-medium" id='clock' name="time_asked">
+                        <input name="save" type="submit" value="Save" id='main-form' class="btn btn-success"/>
+                    </div>
+                </form>
+                <br/>
+                <br/>
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="header">
+                            <h3>Recent History</h3>
+                        </div>
+                        <p></p>
+                        {% for event in events %}
+                        <span>
+                            {% for tag in event.choices %}
+                            <a href="../tag/{{ tag.id }}" >{{ tag.choice }}</a> ·
+                {% endfor %}
+            {{ event.time | friendly_time }}
+                            <a name="delete" href=# id='eventclick{{event.id}}'> <i class='icon-trash icon-large'></i>
+<script type="text/javascript">
+$(document).ready(function() {
+$('#eventclick{{event.id}}').click(function() {
+jQuery("#event{{ event.id }}").submit();
+});
+});
+</script>
+                                <form action="/admindelete" class='form form-inline' id="event{{ event.id }}" method="post">
+                                    <input type="hidden" name="no" value="{{ event.id }}">
+                                    <input type="hidden" name="table" value="questions"></a>
+                            </form>
+                        </span>
+                        
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="span5">
+                <div class="header">
+                    <h3>
+                        Notes
+                        <a data-toggle="modal" href="#new_message" class="btn pull-right">New Note</a>
+                    </h3>
+                </div>
+                <br/>
+                {% for message in messages %}
+    {% if message.show == True %}
+    {% for library in message.libraries %}
+    {% if the_library == library.name %}
+
+<script type="text/javascript">
+$(document).ready(function() {
+$('#messageclick{{message.id}}').click(function() {
+jQuery("#message{{ message.id }}").submit();
+});
+});
+</script>
+                <div>
+                    <div>
+                        <form action="/admindelete" id="message{{ message.id }}" method="post">
+                            <div class="post">
+                                {% if message.title %}
+                                <h3>{{ message.title|safe }}{{the_library_id}}</h3>
+                                {% endif %}
+                                <p>{{ message.message|safe }}</p>
+                                <p> <em>By {{ message.author }}</em></p>
+                                    <p></p>
+                                    {% for tag in message.message_tags %}
+                            <a href="../tag/{{ tag.id }}" >{{ tag.choice }}</a> ·
+                            {% endfor %}
+                                    <a data-toggle="modal" title="Email" class='pull-right popup' href="#new_email"> <i class="icon-envelope icon-large"></i>
+                                    </a>
+                                    &nbsp;&nbsp;&nbsp;
+                        {% if message.promoted == True %}
+                                    <a href="/promote/{{message.id}}" title="Demote" class='pull-right popup'>
+                                        <i class="icon-star icon-large"></i>
+                                    </a>
+                        {% else %}
+                                    <a href="/promote/{{message.id}}" title="Promote" class='pull-right popup'>
+                                        <i class="icon-star-empty icon-large"></i>
+                                    </a>
+                        {% endif %}
+                    {% if current_user.has_role('admin') %}
+                                    <a href="/edit/{{ message.id }}" title="Edit" class='pull-right popup'>
+                                        <i class="icon-wrench icon-large"></i>
+                                    </a>
+                                    <a name="delete" href=# title="Delete" class='pull-right popup' id='messageclick{{message.id}}'>
+                                        <i class='icon-trash icon-large'></i>
+                                    </a>
+                                </p>
+                                {% else %}
+                        {% if current_user.username == message.author %}
+                                <a href="/edit/{{ message.id }}" title="Edit" class='pull-right popup'>
+                                    <i class="icon-wrench"></i>
+                                </a>
+                                &nbsp;&nbsp;&nbsp;
+                                <a name="delete" title="Delete" class='pull-right popup' href=# id='messageclick{{message.id}}'>
+                                    <i class='icon-trash icon-large'></i>
+                                </a>
+                            </p>
+                            {% endif %}
+                        {% endif %}
+                        </div>
+                        <input type="hidden" name="no" value="{{message.id}}">
+                        <input type="hidden" name="table" value="messages"></form>
+                </div>
+            </div>
+            <div id="new_email" class="modal hide" style="display: none; ">
+                <div class="modal-header">
+                    <a class="close" data-dismiss="modal">×</a>
+                    <h3>Email this item.</h3>
+                </div>
+                <div class="modal-body">
+                    <form action="/email" class="new_email" id="new_email" method="post">
+                        <input type="hidden" name="body" value="{{message.message}}">
+                        <input type="hidden" name="title" value="{{message.title}}">
+                        <p>
+                            To:
+                            <input type="text" name="recipient"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <input name="save" type="submit" value="Email" class="btn btn-success" />
+                    </form>
+                    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+                </div>
+            </div>
+            {%endif%}
+{%endfor%}
+            {%endif%}
+{%endfor%}
+        </div>
+    </div>
+    <script type='text/javascript' src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='chosen/chosen.jquery.min.js')}}"></script>
+    <script type='text/javascript' src="{{ url_for('static', filename='ckeditor/adapters/jquery.js') }}"></script>
+
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+      jQuery("#chosen").chosen();
+      jQuery("#chosen2").chosen();
+      jQuery("#editor").ckeditor(function(){},{height:120});
+      $(".selector").change(function() {
+        var $value = $(this).val();
+        var $title = $(this).children('option[value='+$value+']').html();
+        $('#library').val($title);
+    });
+    });
+</script>
+    {% endblock %}

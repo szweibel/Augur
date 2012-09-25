@@ -1,0 +1,147 @@
+{% extends "layout.html" %}
+{% block body %}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='daterange/bootstrap-datepicker.css')}}">
+<script type='text/javascript' src='{{url_for('static', filename='Loadingdotdotdot/js/jquery.loadingdotdotdot.js')}}'>
+</script>
+<script type="text/javascript" src="{{url_for('static', filename='jqplot/jquery.jqplot.min.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='jqplot/plugins/jqplot.dateAxisRenderer.min.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='jqplot/plugins/jqplot.canvasTextRenderer.min.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='jqplot/plugins/jqplot.canvasAxisTickRenderer.min.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='jqplot/plugins/jqplot.categoryAxisRenderer.min.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='jqplot/plugins/jqplot.pieRenderer.min.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='daterange/bootstrap-datepicker.js')}}"></script>
+
+<script type="text/javascript">
+jQuery(document).ready(function() {
+    $('#reportrange').datepicker({
+        noOffset: false,
+    });
+    $('#reportrange2').datepicker({
+        noOffset: false,
+    });
+    $('#CSV').click(function() {
+        $("#chart_format").attr("action", "{{ url_for('data') }}");
+        $("#chart_format").submit();
+    });
+
+});
+
+</script>
+<div class="row-fluid">
+<div class="pull-right">
+    <form action="{{ url_for('charts') }}" class="form-inline" id="chart_format" method="post">
+        <div>
+            <i class="icon-calendar icon-large"></i>
+            <label>Show data from:</label>
+            <input id="reportrange" value='{{start_date}}' name="start_date">
+            <label>To:</label>
+            <input id="reportrange2" value='{{end_date}}' name="end_date">
+            <input name="save" type="submit" value="Chart!" class="btn btn-primary" />
+            <input name="download" type="submit" value="Save as CSV" id='CSV' class="btn btn-search" />
+        </div>
+    </form>
+</div>
+</div>
+<div id="chart"></div>
+
+<script class="code" type="text/javascript">
+        $(document).ready(function(){
+            $.getJSON('/jchartevents/{{ the_library }}/{{ start_date|default('1900-01-01') }}/{{end_date|default('2101-01-01') }}',function (data) {
+               console.log(data.output);
+               $.jqplot('chart', [data.output], {
+                    title:'Questions Asked',
+                    axes:{
+                        xaxis:{
+                            renderer:$.jqplot.DateAxisRenderer,
+                            tickOptions:{formatString:'%b %#d'},
+                            pad: 0,
+                        }
+                    },
+                    series:[{
+                        lineWidth:2,
+                        markerOptions:{style:'diamond',size:10},
+                        rendererOptions: {
+                            smooth: true
+                        }
+                    }]
+                });
+            });
+       });
+</script>
+
+<div id='weekchart'></div>
+
+<script class="code" type="text/javascript">
+        $(document).ready(function(){
+            $.getJSON('/jchartweekly/{{ the_library }}/{{ start_date|default('1900-01-01') }}/{{end_date|default('2101-01-01') }}',function (data) {
+               console.log(data.output);
+              $.jqplot('weekchart', [data.output], {
+                    title:'Average, Per Day',
+                    axes:{
+                        xaxis:{
+                            renderer: $.jqplot.CategoryAxisRenderer,
+                        }
+                    },
+                    series:[{
+                        lineWidth:2,
+                        markerOptions:{style:'diamond',size:10},
+                        rendererOptions: {
+                            smooth: true
+                        }
+                    }]
+                });
+            });
+       });
+</script>
+
+<p></p>
+
+<div class='row'>
+        {%for subject in chooser %}
+        {% if subject.metatag == False %}
+        {% for library in subject.libraries %}
+            {% if the_library == library.name %}
+
+<div class='span5 chart{{ subject.id }} '></div>
+<script type="text/javascript">
+jQuery(document).ready(function() {
+    $(".chart{{subject.id}}").Loadingdotdotdot({
+                "speed": 400,
+                "maxDots": 4
+            });
+    $.getJSON('/jchartpie/{{ the_library }}/{{ subject.id }}/{{ start_date|default('1900-01-01') }}/{{end_date|default('2101-01-01') }}',function (data) {
+               console.log(data.output);
+               $.jqplot('chart{{ subject.id }}', [data.output], 
+                { 
+                    title:'By {{subject.name}}',
+                    seriesDefaults: {
+                // Make this a pie chart.
+                    renderer: jQuery.jqplot.PieRenderer, 
+                    rendererOptions: {
+                // Put data labels on the pie slices.
+                // By default, labels show the percentage of the slice.
+                    showDataLabels: true,
+                    fill: true,
+                                }
+                            }, 
+                legend: { show:true,  
+                    location: 'e',
+                    fontSize: 10,
+                    rendererOptions: {
+                    }, 
+                     }
+                });
+               $(".chart{{subject.id}}").Loadingdotdotdot("Stop");
+               $('.chart{{subject.id}}').remove();
+            });
+});
+</script>
+
+<div class='span4' id='chart{{subject.id}}'></div>
+
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endfor %}
+</div>
+{% endblock %}
