@@ -1,5 +1,6 @@
 *.py[cod]
-
+.DS_Store
+/whoosh_indexes
 # C extensions
 *.so
 
