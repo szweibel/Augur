@@ -24,6 +24,10 @@ git clone https://github.com/Zwounds/Augur.git
 
 pip install -r requirements.txt
 
+Change 'settings.cfg.template' to 'settings.cfg'
+
+In settings.cfg, change the secret key to whatever you'd like, and fill in the appropriate info for Mysql.
+
 python manage.py restart_db
 
 gunicorn -w 4 -u 0.0.0.0:5000 augur:app
