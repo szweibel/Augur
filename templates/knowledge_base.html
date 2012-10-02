@@ -42,7 +42,6 @@
 </div>
 
 <div>
-    
 </div>
 <br/>
 {% for message in entries %}
@@ -61,10 +60,9 @@ jQuery("#message{{ message.id }}").submit();
                     <h3 class='post-header'>{{ message.title|safe }}</h3>
             {% endif %}
             <p>{{ message.message|safe }}</p>
-            
             <h5>
             {% for tag in message.message_tags %}
-            <a href="../tag/{{ tag.id }}">{{ tag.choice }} ·</a>
+            <a href="../tag/{{ tag.id }}">{{ tag.choice }}</a> ·
             {% endfor %}
             </h5>
             <p>
