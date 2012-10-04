@@ -7,6 +7,8 @@ from datetime import timedelta
 #from shutil import *
 from flask import Flask, request, redirect, url_for, render_template, flash, make_response, jsonify, send_file
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask_mail import Mail
+from flask_mail import Message
 import flask.ext.restless
 from collections import Counter
 from flask.ext.security import (Security, LoginForm, login_required, roles_accepted, user_datastore)
@@ -16,6 +18,7 @@ import tablib
 
 # create application
 app = Flask('augur')
+mail = Mail(app)
 app.config.from_pyfile('settings.cfg')
 
 # connect to database
@@ -180,6 +183,11 @@ def expire_messages(no):
         expiring.show = False
     db.session.commit()
 
+def send_another(sender, receiver, subject, body):
+    Message(recipients=[receiver], subject=subject)
+    msg.body = "testing"
+    msg.html = "<b>testing</b>"
+    mail.send(msg)
 
 # Send an email
 def send_email(sender, receiver, subject, body):
@@ -797,6 +805,7 @@ def email():
     body = request.form['body']
     recipient = request.form['recipient']
     send_email('augurlibrary@gmail.com', recipient, title, body)
+    #send_another('augurlibrary@gmail.com', recipient, title, body)
     flash('Email sent!')
     return redirect(url_for('show_entries', library_id=library_id))
 
