@@ -7,8 +7,6 @@ from datetime import timedelta
 #from shutil import *
 from flask import Flask, request, redirect, url_for, render_template, flash, make_response, jsonify, send_file
 from flask.ext.sqlalchemy import SQLAlchemy
-from flask_mail import Mail
-from flask_mail import Message
 import flask.ext.restless
 from collections import Counter
 from flask.ext.security import (Security, LoginForm, login_required, roles_accepted, user_datastore)
@@ -182,12 +180,6 @@ def expire_messages(no):
     if expiring.show == True:
         expiring.show = False
     db.session.commit()
-
-def send_another(sender, receiver, subject, body):
-    Message(recipients=[receiver], subject=subject)
-    msg.body = "testing"
-    msg.html = "<b>testing</b>"
-    mail.send(msg)
 
 # Send an email
 def send_email(sender, receiver, subject, body):
