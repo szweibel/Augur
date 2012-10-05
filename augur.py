@@ -16,7 +16,7 @@ import tablib
 
 # create application
 app = Flask('augur')
-mail = Mail(app)
+
 app.config.from_pyfile('settings.cfg')
 
 # connect to database
