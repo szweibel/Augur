@@ -288,6 +288,10 @@ def show_entries(library_id):
 @app.route('/charts', methods=['GET', 'POST'])
 @login_required
 def charts():
+    weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    today=datetime.today()
+    today_int = datetime.date(today).weekday() + 1
+    today = weekdays[today_int - 1]
     if request.method == 'POST':
         start_day = request.form['start_date']
         if start_day == '':
@@ -299,7 +303,7 @@ def charts():
         end_date = datetime.strptime(end_day, '%Y-%m-%d').date()
         all_subjects = Subject.query.filter_by(metatag=False)
         flash('Now showing data between %s and %s' % (str(start_date), str(end_date)))
-        return render_template('charts.html', start_date=start_day, end_date=end_day,
+        return render_template('charts.html', start_date=start_day, end_date=end_day, today=today, today_int=today_int,
          chooser=all_subjects, timechart=None)
     DD = timedelta(days=30)
     DA = timedelta(days=1)
@@ -309,9 +313,8 @@ def charts():
     start_date = datetime.strftime(start_date, '%Y-%m-%d')
     end_date = datetime.strftime(end_date, '%Y-%m-%d')
     subjects = Subject.query.filter_by(metatag=False)
-    chosen_library = 'all'
-    resp = make_response(render_template('charts.html', chooser=subjects,
-        subjects=None, timechart=1, library=chosen_library, start_date=start_date, end_date=end_date))
+    resp = make_response(render_template('charts.html', chooser=subjects, today=today, today_int=today_int,
+        subjects=None, timechart=1, start_date=start_date, end_date=end_date))
     return resp
 
 
@@ -335,6 +338,7 @@ def jchart(library, start_date, end_date):
     event_days = []
     events = sorted(events)
     data = []
+
     event_days = [datetime.date(event) for event in events]
     counted = dict(Counter(event_days))
     for key in sorted(counted.iterkeys()):
@@ -363,10 +367,10 @@ def jchart_weekly(library, start_date, end_date):
         result = db.session.query(Event).filter(Event.time.between(start_date, end_date)).filter_by(library=chosen_library).order_by(Event.time)
     delta = (end_date - start_date) / 7
 
-    weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     events = sorted([x.time for x in result])
     events = [x.strftime('%A') for x in events]
     data = []
+    weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     counted = dict(Counter(events))
     for day in weekdays:
         for key in counted.iterkeys():
@@ -375,6 +379,35 @@ def jchart_weekly(library, start_date, end_date):
                 data.append(item)
     return jsonify(output=data)
 
+
+# JSON For an hourly chart? Requires *day* as integer.
+@app.route('/jcharthourly/<library>/<start_date>/<end_date>/<day>')
+@login_required
+def jchart_hourly(library, start_date, end_date, day):
+    chosen_library = Library.query.filter_by(name=library).first()
+    weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    if start_date == '1900-01-01':
+        DD = timedelta(days=30)
+        end_date = datetime.today()
+        start_date = end_date - DD
+    else:
+        start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+        end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+    if library == 'all':
+        result = db.session.query(Event).filter(Event.time.between(start_date, end_date)).order_by(Event.time)
+    else:
+        result = db.session.query(Event).filter(Event.time.between(start_date, end_date)).filter_by(library=chosen_library).order_by(Event.time)
+    delta = (end_date - start_date) / 7
+    events = sorted([x.time for x in result])
+    events = sorted([x.strftime('%H:00') for x in events if x.strftime('%w') == day])
+    counted = dict(Counter(events))
+    data = []
+    for key,value in counted.iteritems():
+        counted[key] = int(value) / int(delta.days)
+        item = [key, counted[key]]
+        data.append(item)
+    data = sorted(data)
+    return jsonify(output=data)
 
 # JSON for the Javascript Pie chart
 @app.route('/jchartpie/<library>/<int:subject_id>/<start_date>/<end_date>')

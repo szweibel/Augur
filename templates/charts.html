@@ -22,11 +22,7 @@ $('#CSV').click(function() {
     $("#chart_format").attr("action", "{{ url_for('data') }}");
     $("#chart_format").submit();
 });
-
 });
-
-
-
 </script>
 <div class="row-fluid">
 <div class="header">
@@ -84,7 +80,7 @@ $('#CSV').click(function() {
             $.getJSON('/jchartweekly/{{ the_library }}/{{ start_date|default('1900-01-01') }}/{{end_date|default('2101-01-01') }}',function (data) {
                console.log(data.output);
               $.jqplot('weekchart', [data.output], {
-                    title:'Average, Per Day',
+                    title:'Average, Weekly',
                     axes:{
                         xaxis:{
                             renderer: $.jqplot.CategoryAxisRenderer,
@@ -102,6 +98,33 @@ $('#CSV').click(function() {
        });
 </script>
 
+<div id='hourchart'></div>
+
+<script class="code" type="text/javascript">
+    var today_integer = '{{today_int}}'
+        $(document).ready(function(){
+            $.getJSON('/jcharthourly/{{ the_library }}/{{ start_date|default('1900-01-01') }}/{{end_date|default('2101-01-01') }}/' + today_integer,function (data) {
+               console.log(data.output);
+              $.jqplot('hourchart', [data.output], {
+                  title:'Average for {{today}}s',
+                    axes:{
+                        xaxis:{
+                            renderer: $.jqplot.CategoryAxisRenderer,
+                        }
+                    },
+                    series:[{
+                        lineWidth:2,
+                        markerOptions:{style:'diamond',size:10},
+                        rendererOptions: {
+                            smooth: true
+                        }
+                    }]
+                });
+            });
+       });
+</script>
+
+
 <p></p>
 <div class='row'>
     {%for subject in chooser %}
@@ -117,26 +140,26 @@ jQuery(document).ready(function() {
             });
     $.getJSON('/jchartpie/{{ the_library }}/{{ subject.id }}/{{ start_date|default('1900-01-01') }}/{{end_date|default('2101-01-01') }}',function (data) {
                console.log(data.output);
-               $.jqplot('chart{{ subject.id }}', [data.output], 
-                { 
+               $.jqplot('chart{{ subject.id }}', [data.output],
+                {
                     title:'By {{subject.name}}',
                     seriesDefaults: {
                 // Make this a pie chart.
-                    renderer: jQuery.jqplot.PieRenderer, 
+                    renderer: jQuery.jqplot.PieRenderer,
                     rendererOptions: {
                 // Put data labels on the pie slices.
                 // By default, labels show the percentage of the slice.
                     showDataLabels: true,
                     fill: true,
                                 }
-                            }, 
-                legend: { show:true,  
+                            },
+                legend: { show:true,
                     location: 'e',
                     fontSize: 10,
                     /*placement: 'outside',*/
                     rendererOptions: {
                 /*numberRows: 4*/
-                    }, 
+                    },
                      }
                 });
                $(".chart{{subject.id}}").Loadingdotdotdot("Stop");
