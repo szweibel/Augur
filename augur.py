@@ -4,7 +4,6 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime
 from datetime import timedelta
-#from shutil import *
 from flask import Flask, request, redirect, url_for, render_template, flash, make_response, jsonify, send_file
 from flask.ext.sqlalchemy import SQLAlchemy
 import flask.ext.restless
@@ -303,7 +302,7 @@ def charts():
         end_date = datetime.strptime(end_day, '%Y-%m-%d').date()
         all_subjects = Subject.query.filter_by(metatag=False)
         flash('Now showing data between %s and %s' % (str(start_date), str(end_date)))
-        return render_template('charts.html', start_date=start_day, end_date=end_day, today=today, today_int=today_int,
+        return render_template('charts.html', start_date=start_day, end_date=end_day, today=today, today_int=today_int, weekdays=weekdays,
          chooser=all_subjects, timechart=None)
     DD = timedelta(days=30)
     DA = timedelta(days=1)
@@ -313,7 +312,7 @@ def charts():
     start_date = datetime.strftime(start_date, '%Y-%m-%d')
     end_date = datetime.strftime(end_date, '%Y-%m-%d')
     subjects = Subject.query.filter_by(metatag=False)
-    resp = make_response(render_template('charts.html', chooser=subjects, today=today, today_int=today_int,
+    resp = make_response(render_template('charts.html', chooser=subjects, today=today, today_int=today_int, weekdays=weekdays,
         subjects=None, timechart=1, start_date=start_date, end_date=end_date))
     return resp
 
@@ -380,12 +379,11 @@ def jchart_weekly(library, start_date, end_date):
     return jsonify(output=data)
 
 
-# JSON For an hourly chart? Requires *day* as integer.
+# JSON For an hourly chart
 @app.route('/jcharthourly/<library>/<start_date>/<end_date>/<day>')
 @login_required
 def jchart_hourly(library, start_date, end_date, day):
     chosen_library = Library.query.filter_by(name=library).first()
-    weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
     if start_date == '1900-01-01':
         DD = timedelta(days=30)
         end_date = datetime.today()
@@ -398,10 +396,14 @@ def jchart_hourly(library, start_date, end_date, day):
     else:
         result = db.session.query(Event).filter(Event.time.between(start_date, end_date)).filter_by(library=chosen_library).order_by(Event.time)
     delta = (end_date - start_date) / 7
+    times = ['07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00']
     events = sorted([x.time for x in result])
-    events = sorted([x.strftime('%H:00') for x in events if x.strftime('%w') == day])
-    counted = dict(Counter(events))
+    formatted_events = sorted([x.strftime('%H:00') for x in events if x.strftime('%A') == day])
+    counted = dict(Counter(formatted_events))
     data = []
+    for time in times:
+        if time not in counted.iterkeys():
+            counted[time] = 0
     for key,value in counted.iteritems():
         counted[key] = int(value) / int(delta.days)
         item = [key, counted[key]]
