@@ -27,7 +27,7 @@ $(document).ready(function()
    setInterval('updateClock()', 1000);
 $('#clock').click(function() {
     jQuery("#clock").removeAttr('id');
-});
+    });
 });
 </script>
 <div id="new_message" class="modal hide fade in" style="display: none; ">
@@ -108,7 +108,7 @@ $('#clock').click(function() {
                     {% endfor %}
                     <div class="span12">
                         Tags:
-                        <select class="input-large chzn-select" data-placeholder="Choose some tags..." multiple="true" id="chosen" name="values">
+                        <select class="input-large chzn-select" data-placeholder="Choose some tags" multiple="true" id="chosen" name="values">
                             {%for subject in subjects %}
                 {%for choice in subject.choices %}
                         {% if choice.metatag == True %}
@@ -162,8 +162,8 @@ jQuery("#event{{ event.id }}").submit();
             <div class="span5">
                 <div class="header">
                     <h3>
-                        Notes
-                        <a data-toggle="modal" href="#new_message" class="btn pull-right">New Note</a>
+                        Announcements
+                        <a data-toggle="modal" href="#new_message" class="btn pull-right">New</a>
                     </h3>
                 </div>
                 <br/>

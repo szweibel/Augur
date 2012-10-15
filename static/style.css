@@ -31,7 +31,7 @@ h3 {
 .navbar {
   *position: relative;
   *z-index: 2;
-  margin-bottom: -10px;
+  margin-bottom: -30px;
   overflow: visible;
   color: #555555;
 }
@@ -118,8 +118,8 @@ body > .navbar .brand:hover {
   color: black;
   background-color: #84C282;
   border-color: #d6e9c6;
-  margin-bottom: 10px;
-  margin-top: 20px;
+  margin-bottom: -50px;
+  margin-top: 45px;
 }
 
 select {

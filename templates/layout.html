@@ -113,13 +113,15 @@
     </div>
 </div>
 {% for message in get_flashed_messages() %}
-<div class="alert alert-success container">
+<div class="alert alert-success container row">
 <div>
   <button type="button" href="#" class="close" data-dismiss="alert">×</button>
   {{message}}
 </div>
 </div>
 {% endfor %}
+<br />
+<p></p>
 <div class="container">{% block body %}{% endblock %}</div>
 </body>
 </html>
