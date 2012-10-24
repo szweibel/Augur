@@ -405,7 +405,11 @@ def jchart_hourly(library, start_date, end_date, day):
         if time not in counted.iterkeys():
             counted[time] = 0
     for key,value in counted.iteritems():
-        counted[key] = int(value) / int(delta.days)
+        try:
+            counted[key] = int(value) / int(delta.days)
+        except:
+            # If DivideByZero
+            counted[key] = int(value) / 1 
         item = [key, counted[key]]
         data.append(item)
     data = sorted(data)
