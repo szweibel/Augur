@@ -24,19 +24,24 @@ function updateClock ( )
  
 $(document).ready(function()
 {
-   setInterval('updateClock()', 1000);
-$('#clock').click(function() {
-    jQuery("#clock").removeAttr('id');
+    $('#new_message_submit').click(function(event) {
+    event.preventDefault();
+  $('#new_message_form').submit();
+});
+    setInterval('updateClock()', 1000);
+    $('#clock').click(function() {
+        jQuery("#clock").removeAttr('id');
     });
 });
 </script>
+
 <div id="new_message" class="modal hide fade in" style="display: none; ">
     <div class="modal-header">
         <a class="close" data-dismiss="modal">×</a>
         <h3>New</h3>
     </div>
     <div class="modal-body">
-        <form action="/message" class="form-inline" id="new_message" method="post">
+        <form action="/message" class="form-inline" id="new_message_form" method="post">
             <label class='control-label' for='message_title'>Title:</label>
             <input class="input-large" id="message_title" type="text" name="title"/>
             <label class='control-label' for='chosen2'>Tags:</label>
@@ -67,7 +72,7 @@ $('#clock').click(function() {
             <input type="hidden" name="date" value="{{day}}" />
         </div>
         <div class="modal-footer">
-            <input name="save" type="submit" value="Save" class="btn btn-success" />
+            <input name="save" type="submit" value="Save" id='new_message_submit' class="btn btn-success" />
         </form>
         <a href="#" class="btn" data-dismiss="modal">Close</a>
     </div>
