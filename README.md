@@ -14,7 +14,7 @@ sudo apt-get install git
 
 sudo apt-get install mysql-server
 
-sudo apt-get install python-mysqldb
+sudo apt-get install python-mysqldb.
 
 mysql -u root -p
 
