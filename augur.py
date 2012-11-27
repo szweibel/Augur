@@ -409,7 +409,7 @@ def jchart_hourly(library, start_date, end_date, day):
             counted[key] = int(value) / int(delta.days)
         except:
             # If DivideByZero
-            counted[key] = int(value) / 1 
+            counted[key] = int(value) / 1
         item = [key, counted[key]]
         data.append(item)
     data = sorted(data)
@@ -879,6 +879,6 @@ def profile():
 
 if __name__ == '__main__':
     # Bind to PORT if defined, otherwise default to 5000.
-    port = int(os.environ.get('PORT', 4000))
+    port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
     # app.run()

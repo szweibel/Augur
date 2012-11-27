@@ -21,7 +21,7 @@ function updateClock ( )
      $("#clock").val(displayDate);
 
  }
- 
+
 $(document).ready(function()
 {
     $('#new_message_submit').click(function(event) {
@@ -118,7 +118,7 @@ $(document).ready(function()
                 {%for choice in subject.choices %}
                         {% if choice.metatag == True %}
                             <option class="headoption" name="values" value='{{ choice.id }}'>{{choice.choice}}</option>
-                            {%for choice in subject.choices %} 
+                            {%for choice in subject.choices %}
                         {% if choice.metatag == False %}
                             <option class="suboption" name="values" value='{{ choice.id }}'>{{choice.choice}}</option>
                             {%endif%}
@@ -175,7 +175,7 @@ jQuery("#event{{ event.id }}").submit();
                 {% for message in messages %}
     {% if message.show == True %}
     {% for library in message.libraries %}
-    {% if the_library == library.name %}
+    {% if the_library_id == library.id %}
 
 <script type="text/javascript">
 $(document).ready(function() {
