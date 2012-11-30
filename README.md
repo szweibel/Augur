@@ -1,11 +1,11 @@
 ## Augur
 
 Augur is a webapp for tracking reference desk statistics for libraries, inspired by libstats. It was written in Python and Javascript.
-Python version 2.6 required.
+Python version 2.7 required.
 
 In Ubuntu/Debian:
 
-sudo apt-get install python-pip python-dev build-essential 
+sudo apt-get install python-pip python-dev build-essential
 
 sudo pip install --upgrade pip
 
@@ -31,6 +31,6 @@ In settings.cfg, change the secret key to whatever you'd like, and fill in the a
 
 python manage.py restart_db
 
-gunicorn -w 4 -u 0.0.0.0:5000 augur:app
+gunicorn -w 4 -b 0.0.0.0:5000 augur:app
 
 Now Augur is running on port 5000. Change the default password in manage.py line 21.
