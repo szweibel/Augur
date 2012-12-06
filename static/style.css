@@ -12,8 +12,8 @@ a, h1, h2
 h1, h2
 {
     margin: -10px;
-}           
-h2       
+}
+h2
 {
 	font-size: 1.2em;
 }
@@ -45,7 +45,7 @@ h3 {
   background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#2f4557), to(#2f4557));
   background-image: -webkit-linear-gradient(top, #2f4557, #2f4557);
   background-image: -o-linear-gradient(top, #2f4557, #2f4557);
-  background-image: linear-gradient(to bottom, #ffffff, #2f4557);
+  background-image: linear-gradient(to bottom, #2f4557, #2f4557);
   background-repeat: repeat-x;
   border: 1px solid #d4d4d4;
   -webkit-border-radius: 4px;
@@ -156,7 +156,7 @@ select {
     padding-right: 20px;
     padding-left: 20px;
     background-color: #ffffc4;
-  
+
   -webkit-border-radius: 4px;
      -moz-border-radius: 4px;
           border-radius: 4px;
@@ -167,7 +167,7 @@ select {
 }
 
 .knowledge-post
-{  
+{
   -webkit-border-radius: 4px;
      -moz-border-radius: 4px;
           border-radius: 4px;
@@ -183,7 +183,7 @@ select {
   padding-right: 20px;
   padding-left: 20px;
   background-color: #ffffc4;
-  
+
   -webkit-border-radius: 4px;
      -moz-border-radius: 4px;
           border-radius: 4px;
@@ -218,12 +218,12 @@ select {
   color: #333;
 }
 
-.chzn-container .chzn-results .active-result.suboption {  
+.chzn-container .chzn-results .active-result.suboption {
   margin-left: 20px;
 }
 
 .chzn-container {
- margin-bottom: -7px; 
+ margin-bottom: -7px;
 }
 
 .navbar-form input,
@@ -243,7 +243,7 @@ select {
 }
 
 .navbar-form input {
-  width: 100px; 
+  width: 100px;
 }
 
 .header h3 {
@@ -256,4 +256,3 @@ select {
   padding-right: 20px;
   padding-bottom: 5px;
   padding-left: 3px;
-  
