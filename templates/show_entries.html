@@ -2,6 +2,7 @@
 {% block body %}
 <script type="text/javascript">var SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
 <script type="text/javascript">
+var newItems = 0
 function updateClock ( )
      {
      var currentTime = new Date ( );
@@ -16,8 +17,6 @@ function updateClock ( )
      // Compose the string for display
      var currentTimeString = currentHours + ":" + currentMinutes;
      var displayDate = (currentTime.getFullYear()) + '-' + (currentTime.getMonth()+1) + '-' + currentTime.getDate() + ' ' + currentTimeString;
-
-
      $("#clock").val(displayDate);
 
  }
@@ -26,14 +25,21 @@ $(document).ready(function()
 {
     $('#new_message_submit').click(function(event) {
     event.preventDefault();
-  $('#new_message_form').submit();
-});
+    $('#new_message_form').submit();
+    });
     setInterval('updateClock()', 1000);
     $('#clock').click(function() {
         jQuery("#clock").removeAttr('id');
     });
 
-    $('.each_choice').sisyphus();
+    $('#main-form').click(function(event){
+        event.preventDefault();
+        $('#the_alert').fadeIn();
+        $('#the_alert').delay(3000).fadeOut();
+        var formData = $('#new_question').serialize();
+        $.post('/add', formData, newItems+=1);
+        $("#new_ones").replaceWith("<div id='new_ones'>Refresh to see <span class='badge badge-important'>" + newItems + "</span> new</div>");
+    });
 });
 </script>
 
@@ -92,7 +98,7 @@ $(document).ready(function()
             <input id="library" type="hidden" name='library' class="bacon" value="{{the_library}}">
             {% for subject in subjects %}
             {% for library in subject.libraries %}
-            {% if the_library == library.name %}
+            {% if the_library_id == library.id %}
                 {% if subject.metatag == False %}
             {% if library.subjects|count == 4 %}
             <div class='span2 offset2 each_choice'>
@@ -102,7 +108,7 @@ $(document).ready(function()
                     <div class='span2 offset1 each_choice'>
                         {% endif %}
                         <span class='label'>{{subject.name}}</span>
-                        <select id="{{subject.name}}_id" name="values" size="5" >
+                        <select id="{{subject.name}}_id" name="values" size="5" class='all_choices'>
                             {% for choice in subject.choices %}
                             <option value="{{choice.id}}" name="values">{{choice.choice}}</option>
                             {% endfor %}
@@ -142,8 +148,10 @@ $(document).ready(function()
                             <h3>Recent History</h3>
                         </div>
                         <p></p>
+                        <div id='new_ones'></div>
+                        <ul id='history_list'>
                         {% for event in events %}
-                        <span>
+                        <li>
                             {% for tag in event.choices %}
                             <a href="../tag/{{ tag.id }}" >{{ tag.choice }}</a> ·
                 {% endfor %}
@@ -160,8 +168,9 @@ jQuery("#event{{ event.id }}").submit();
                                     <input type="hidden" name="no" value="{{ event.id }}">
                                     <input type="hidden" name="table" value="questions"></a>
                             </form>
-                        </span>
+                        </li>
                         {% endfor %}
+                        </ul>
                     </div>
                 </div>
             </div>
