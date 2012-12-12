@@ -32,6 +32,10 @@ $(document).ready(function()
         jQuery("#clock").removeAttr('id');
     });
 
+    // $('#clear').click(function(event){
+    //     $('#new_question').empty();
+    // });
+
     $('#main-form').click(function(event){
         event.preventDefault();
         $('#the_alert').fadeIn();
@@ -89,12 +93,14 @@ $(document).ready(function()
 <div class='row-fluid'>
 <div class="row-fluid span12">
     <div class="span7">
+        <form action="/add" class="form" id="new_question" method="post" class='navbar-form'>
         <div class="header">
-            <h3>Log an Event</h3>
+            <h3>Log an Event
+            <!-- <a id='clear' class="btn pull-right">Clear</a> -->
+            <input type="reset" class="btn pull-right" value="Clear" /></h3>
         </div>
         <p></p>
 
-        <form action="/add" class="form" id="new_question" method="post" class='navbar-form'>
             <input id="library" type="hidden" name='library' class="bacon" value="{{the_library}}">
             {% for subject in subjects %}
             {% for library in subject.libraries %}
@@ -114,7 +120,6 @@ $(document).ready(function()
                             {% endfor %}
                         </select>
                     </div>
-
                     {% endif %}
                     {% endif %}
                     {% endfor %}
