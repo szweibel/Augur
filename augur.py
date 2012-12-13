@@ -720,7 +720,6 @@ def message():
     db.session.add(new_message)
     new_message.libraries.append(the_library)
     db.session.commit()
-    flash('New message successfully posted')
     return redirect(url_for('show_entries', library_id=library_id))
 
 
