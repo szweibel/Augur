@@ -662,7 +662,7 @@ def new_library():
     return output
 
 
-# Creates a new Events
+# Creates a new Event
 @app.route('/add', methods=['POST'])
 @login_required
 def add_entry():

@@ -32,9 +32,9 @@ $(document).ready(function()
         jQuery("#clock").removeAttr('id');
     });
 
-    // $('#clear').click(function(event){
-    //     $('#new_question').empty();
-    // });
+    $('#clearing').click(function(event){
+        $(".chzn-select").val('').trigger("liszt:updated");
+    });
 
     $('#main-form').click(function(event){
         event.preventDefault();
@@ -96,8 +96,7 @@ $(document).ready(function()
         <form action="/add" class="form" id="new_question" method="post" class='navbar-form'>
         <div class="header">
             <h3>Log an Event
-            <!-- <a id='clear' class="btn pull-right">Clear</a> -->
-            <input type="reset" class="btn pull-right" value="Clear" /></h3>
+            <input type="reset" id='clearing' class="btn pull-right" value="Clear" /></h3>
         </div>
         <p></p>
 
