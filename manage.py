@@ -5,11 +5,6 @@ import csv
 
 manager = Manager(app)
 
-# ctx = app.test_request_context('/?next=http://example.com/')
-# ctx.push()
-# Kill everything and recreate tables
-
-
 @manager.command
 def restart_db():
     db.drop_all()

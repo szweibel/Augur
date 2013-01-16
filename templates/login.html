@@ -1,13 +1,14 @@
 {% extends "layout.html" %}
 {% block body %}
-
+<br/>
+<br/>
 	<h2>Login</h2>
   <div>
     <form action="{{ url_for('auth.authenticate') }}" class='form-vertical' method="POST">
   {{ form.hidden_tag() }}
   {{ form.username.label }} {{ form.username }}
   {{ form.password.label }} {{ form.password }} <br />
-  {{ form.remember }} {{ form.remember.label }} 
+  {{ form.remember }} {{ form.remember.label }}
   {{ form.submit }}
 </form>
 </div>

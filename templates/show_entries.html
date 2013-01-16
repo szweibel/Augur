@@ -158,7 +158,7 @@ $(document).ready(function()
                         <li>
                             {% for tag in event.choices %}
                             <a href="../tag/{{ tag.id }}" >{{ tag.choice }}</a> ·
-                {% endfor %}
+                            {% endfor %}
             {{ event.time | friendly_time }}
                             <a name="delete" href=# id='eventclick{{event.id}}'> <i class='icon-trash icon-large'></i>
 <script type="text/javascript">

@@ -31,6 +31,6 @@ In settings.cfg, change the secret key to whatever you'd like, and fill in the a
 
 python manage.py restart_db
 
-gunicorn -w 4 -b 0.0.0.0:5000 augur:app
+sudo gunicorn -w 4 -b 0.0.0.0:5000 augur:app
 
 Now Augur is running on port 5000. Change the default password in manage.py line 21.
