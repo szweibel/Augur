@@ -43,6 +43,7 @@ $(document).ready(function()
         var formData = $('#new_question').serialize();
         $.post('/add', formData, newItems+=1);
         $("#new_ones").replaceWith("<div id='new_ones'>Refresh to see <span class='badge badge-important'>" + newItems + "</span> new</div>");
+        $(".chzn-select").val('').trigger("liszt:updated");
     });
 });
 </script>
