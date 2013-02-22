@@ -180,6 +180,7 @@ def expire_messages(no):
         expiring.show = False
     db.session.commit()
 
+
 # Send an email
 def send_email(sender, receiver, subject, body):
     msg = MIMEMultipart('alternative')
@@ -269,6 +270,7 @@ def front_page():
     library = request.cookies.get('library_id') or Library.query.first().id
     return redirect(url_for('show_entries', library_id=library))
 
+
 @app.route('/<library_id>', methods=['GET', 'POST'])
 @login_required
 def show_entries(library_id):
@@ -283,12 +285,13 @@ def show_entries(library_id):
     output = make_response(output)
     return output
 
+
 # View for the /charts page
 @app.route('/charts', methods=['GET', 'POST'])
 @login_required
 def charts():
     weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-    today=datetime.today()
+    today = datetime.today()
     today_int = datetime.date(today).weekday() + 1
     today = weekdays[today_int - 1]
     if request.method == 'POST':
@@ -404,7 +407,7 @@ def jchart_hourly(library, start_date, end_date, day):
     for time in times:
         if time not in counted.iterkeys():
             counted[time] = 0
-    for key,value in counted.iteritems():
+    for key, value in counted.iteritems():
         try:
             counted[key] = int(value) / int(delta.days)
         except:
@@ -414,6 +417,7 @@ def jchart_hourly(library, start_date, end_date, day):
         data.append(item)
     data = sorted(data)
     return jsonify(output=data)
+
 
 # JSON for the Javascript Pie chart
 @app.route('/jchartpie/<library>/<int:subject_id>/<start_date>/<end_date>')
@@ -557,7 +561,7 @@ def promote_message(message_id):
         item.promoted = False
         flash('Item removed from knowledge base.')
     db.session.commit()
-    library_id= request.cookies.get('library_id')
+    library_id = request.cookies.get('library_id')
     return redirect(url_for('show_entries', library_id=library_id))
 
 
@@ -855,6 +859,7 @@ def change_library_cookie():
     output.set_cookie('library_name', which_library.name)
     output.set_cookie('library_id', which_library.id)
     return output
+
 
 @app.route("/upload", methods=['POST'])
 def upload():
