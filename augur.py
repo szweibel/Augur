@@ -561,7 +561,7 @@ def promote_message(message_id):
         item.promoted = False
         flash('Item removed from knowledge base.')
     db.session.commit()
-    library_id = request.cookies.get('library_id')
+    library_id = request.cookies.get('library_id') or Library.query.first().id
     return redirect(url_for('show_entries', library_id=library_id))
 
 
@@ -671,7 +671,7 @@ def new_library():
 @login_required
 def add_entry():
     all_tags = []
-    library_id= request.cookies.get('library_id')
+    library_id= request.cookies.get('library_id') or Library.query.first().id
     if request.form.getlist('values'):
         new_tags = request.form.getlist('values')  # Get every form item with name='values' and create a list
     else:
@@ -694,7 +694,7 @@ def add_entry():
 @app.route('/message', methods=['POST'])
 @login_required
 def message():
-    library_id = request.cookies.get('library_id')
+    library_id = request.cookies.get('library_id') or Library.query.first().id
     all_tags = []
     today = datetime.today()
     title = None
@@ -708,7 +708,7 @@ def message():
         all_tags.append(a)
     new_message = request.form['message']
     current_user = request.form['user']
-    new_date = request.form['date']
+    new_date = today
     expire = request.form['expire']
     expire = today + timedelta(days=int(expire))
     the_library = Library.query.filter_by(id=library_id).first()
@@ -789,7 +789,7 @@ def admin_new_choice():
 @login_required
 def admin_delete():
     no = request.form['no']
-    library_id = request.cookies.get('library_id')
+    library_id = request.cookies.get('library_id') or Library.query.first().id
     table = request.form['table']
     if table == 'messages':
         tag = Message.query.filter_by(id=no).first()
@@ -834,12 +834,11 @@ def admin_delete():
 # Creates the email to be sent
 @app.route('/email', methods=['POST'])
 def email():
-    library_id = request.cookies.get('library_id')
+    library_id = request.cookies.get('library_id') or Library.query.first().id
     title = request.form['title']
     body = request.form['body']
     recipient = request.form['recipient']
     send_email('augurlibrary@gmail.com', recipient, title, body)
-    #send_another('augurlibrary@gmail.com', recipient, title, body)
     flash('Email sent!')
     return redirect(url_for('show_entries', library_id=library_id))
 
@@ -882,6 +881,7 @@ def profile():
 
 
 if __name__ == '__main__':
+    # app.debug = True
     # Bind to PORT if defined, otherwise default to 5000.
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
