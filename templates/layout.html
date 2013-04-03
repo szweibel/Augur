@@ -41,7 +41,7 @@
                 <span class="icon-bar"></span>
             </a>
             <div class='nav-collapse'>
-                <ul class='nav pull-right'>
+                <ul class='nav'>
                     {% if current_user.has_role('admin') %}
                     <li>
                         <form action='/change_library' id='choose_library_cookie' class='navbar-form' method='post'>
@@ -77,10 +77,10 @@
                         <a href="{{ url_for('show_entries', library_id=the_library_id) }}" title="Home"> <strong>Log an Event</strong>
                         </a>
                     </li>
-                    <li>
+                    <!-- <li>
                         <a href="{{ url_for('knowledge_base') }}" title="Knowledge Base"> <strong>Knowledge Base</strong>
                         </a>
-                    </li>
+                    </li> -->
                     <li>
                         <a href="{{ url_for('charts') }}" title="Statistics">
                             <strong>Statistics</strong>
@@ -100,11 +100,11 @@
                         </a>
                     </li>
                     {% endif %}
-                    <li>
+                    <!-- <li>
                         <form action="/knowledgebase" class="navbar-form" method="post">
                             <input type="text" name='search' class=" span2">
                             <button type="submit" class="btn btn-success">Search</button></form>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
     </div>

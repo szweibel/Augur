@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
-<script type="text/javascript">var SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
 <script type="text/javascript">
+var SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 var newItems = 0
 function updateClock ( )
      {
@@ -154,7 +154,7 @@ $(document).ready(function()
                         </div>
                         <p></p>
                         <div id='new_ones'></div>
-                        <ul id='history_list'>
+                        <ul id='history_list' class='unstyled'>
                         {% for event in events %}
                         <li>
                             {% for tag in event.choices %}
@@ -216,7 +216,7 @@ jQuery("#message{{ message.id }}").submit();
                                     <a data-toggle="modal" title="Email" class='pull-right popup' href="#new_email"> <i class="icon-envelope icon-large"></i>
                                     </a>
                                     &nbsp;&nbsp;&nbsp;
-                        {% if message.promoted == True %}
+                        <!-- {% if message.promoted == True %}
                                     <a href="/promote/{{message.id}}" title="Demote" class='pull-right popup'>
                                         <i class="icon-star icon-large"></i>
                                     </a>
@@ -224,7 +224,7 @@ jQuery("#message{{ message.id }}").submit();
                                     <a href="/promote/{{message.id}}" title="Promote" class='pull-right popup'>
                                         <i class="icon-star-empty icon-large"></i>
                                     </a>
-                        {% endif %}
+                        {% endif %} -->
                     {% if current_user.has_role('admin') %}
                                     <a href="/edit/{{ message.id }}" title="Edit" class='pull-right popup'>
                                         <i class="icon-wrench icon-large"></i>

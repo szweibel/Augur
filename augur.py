@@ -10,7 +10,7 @@ import flask.ext.restless
 from collections import Counter
 from flask.ext.security import (Security, LoginForm, login_required, roles_accepted, user_datastore)
 from flask.ext.security.datastore.sqlalchemy import SQLAlchemyUserDatastore
-from whooshalchemy import IndexService
+# from whooshalchemy import IndexService
 import tablib
 
 # create application
@@ -145,9 +145,9 @@ class Message(db.Model):
 
         return '<Message %r>' % self.message
 
-index_service = IndexService(config=app.config)
+# index_service = IndexService(config=app.config)
 
-index_service.register_class(Message)
+# index_service.register_class(Message)
 manager = flask.ext.restless.APIManager(app, flask_sqlalchemy_db=db)
 manager.create_api(Event, methods=['GET', 'POST', 'DELETE'])
 manager.create_api(Subject, methods=['GET', 'POST', 'DELETE'])
