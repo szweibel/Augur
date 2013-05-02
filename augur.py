@@ -113,8 +113,8 @@ class Library(db.Model):
 
 
 class Message(db.Model):
-    __tablename__ = 'message'
-    __searchable__ = ['title', 'message']  # these fields will be indexed by whoosh
+    # __tablename__ = 'message'
+    # __searchable__ = ['title', 'message']  # these fields will be indexed by whoosh
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text)

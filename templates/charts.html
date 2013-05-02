@@ -11,24 +11,41 @@
 <script type="text/javascript" src="{{url_for('static', filename='daterange/bootstrap-datepicker.js')}}"></script>
 
 <script type="text/javascript">
+var today = '{{today}}'
+var makeChartImage = function(location){
+    var graphicImage = $('#' + location);
+    // if(graphicImage.html() == ""){ //If the image was even generated, don't generate it again
+      var divGraph = $('#' + location).jqplotToImageStr({});
+      var divElem  = $('<img/>').attr('src', divGraph);
+      // $('#' + location).empty();
+      graphicImage.html(divElem);
+};
+
 jQuery(document).ready(function() {
-$('#reportrange').datepicker({
-    noOffset: false,
-});
-$('#reportrange2').datepicker({
-    noOffset: false,
-});
-$('#CSV').click(function() {
-    $("#chart_format").attr("action", "{{ url_for('data') }}");
-    $("#chart_format").submit();
-});
+
+    $('#imaging').click(function() {
+        makeChartImage('chart');
+    });
+
+    $('#reportrange').datepicker({
+        noOffset: false,
+    });
+    $('#reportrange2').datepicker({
+        noOffset: false,
+    });
+    $('#CSV').click(function() {
+        $("#chart_format").attr("action", "{{ url_for('data') }}");
+        $("#chart_format").submit();
+    });
 });
 </script>
 <div class="row-fluid">
 <div class="header">
     <h3>Charts</h3>
 </div>
+<div id='graphicImage'></div>
 <p></p>
+<input name="charting" type="submit" value="Save as image" id='imaging' class="btn btn-search" />
     <div class="pull-right">
         <form action="{{ url_for('charts') }}" class="form-inline" id="chart_format" method="post">
             <div> <i class="icon-calendar icon-large"></i>
@@ -59,7 +76,6 @@ $('#CSV').click(function() {
                             renderer:$.jqplot.DateAxisRenderer,
                             tickOptions:{formatString:'%b %#d'},
                         }
-
                     },
                     series:[{
                         lineWidth:2,
@@ -70,34 +86,70 @@ $('#CSV').click(function() {
                     }]
                 });
             });
+           $.getJSON('/jchartweekly/{{ the_library }}/{{ start_date|default('1900-01-01') }}/{{end_date|default('2101-01-01') }}',function (data) {
+              console.log(data.output);
+             $.jqplot('weekchart', [data.output], {
+                   title:'Average, Weekly',
+                   axes:{
+                       xaxis:{
+                           renderer: $.jqplot.CategoryAxisRenderer,
+                       }
+                   },
+                   series:[{
+                       lineWidth:2,
+                       markerOptions:{style:'diamond',size:10},
+                       rendererOptions: {
+                           smooth: true
+                       }
+                   }]
+               });
+           });
+           $.getJSON('/jcharthourly/{{ the_library }}/{{ start_date|default('1900-01-01') }}/{{end_date|default('2101-01-01') }}/' + today,function (data) {
+              console.log(data.output);
+           the_plot = $.jqplot('hourchart', [data.output], {
+                 title:'Average for {{today}}s',
+                   axes:{
+                       xaxis:{
+                           renderer: $.jqplot.CategoryAxisRenderer,
+                       }
+                   },
+                   series:[{
+                       lineWidth:2,
+                       markerOptions:{style:'diamond',size:10},
+                       rendererOptions: {
+                           smooth: true
+                       }
+                   }]
+               });
+            });
+           $("#change_day").change(function(){
+               today = $('#change_day').val();
+               $.getJSON('/jcharthourly/{{ the_library }}/{{ start_date|default('1900-01-01') }}/{{end_date|default('2101-01-01') }}/' + today,function (data) {
+                  console.log(data.output);
+               the_plot = $.jqplot('hourchart', [data.output], {
+                     title:'Average for ' + today + 's',
+                       axes:{
+                           xaxis:{
+                               renderer: $.jqplot.CategoryAxisRenderer,
+                           }
+                       },
+                       series:[{
+                           lineWidth:2,
+                           markerOptions:{style:'diamond',size:10},
+                           rendererOptions: {
+                               smooth: true
+                           }
+                       }]
+                   });
+                });
+                 $('#hourchart').empty();
+                 setTimeout(function(){makeChartImage('hourchart')},300);
+           });
+           setTimeout(function(){makeChartImage('chart'), makeChartImage('hourchart'), makeChartImage('weekchart')},1000);
        });
 </script>
 
 <div id='weekchart'></div>
-
-<script class="code" type="text/javascript">
-        $(document).ready(function(){
-            $.getJSON('/jchartweekly/{{ the_library }}/{{ start_date|default('1900-01-01') }}/{{end_date|default('2101-01-01') }}',function (data) {
-               console.log(data.output);
-              $.jqplot('weekchart', [data.output], {
-                    title:'Average, Weekly',
-                    axes:{
-                        xaxis:{
-                            renderer: $.jqplot.CategoryAxisRenderer,
-                        }
-                    },
-                    series:[{
-                        lineWidth:2,
-                        markerOptions:{style:'diamond',size:10},
-                        rendererOptions: {
-                            smooth: true
-                        }
-                    }]
-                });
-            });
-       });
-</script>
-
 <div id='hourchart'></div>
 <div class=row-fluid>
 <select id='change_day' class='pull-right'>
@@ -110,55 +162,6 @@ $('#CSV').click(function() {
 {% endfor %}
 </select>
 </div>
-
-<script class="code" type="text/javascript">
-    var today = '{{today}}'
-        $(document).ready(function(){
-            $.getJSON('/jcharthourly/{{ the_library }}/{{ start_date|default('1900-01-01') }}/{{end_date|default('2101-01-01') }}/' + today,function (data) {
-               console.log(data.output);
-            the_plot = $.jqplot('hourchart', [data.output], {
-                  title:'Average for {{today}}s',
-                    axes:{
-                        xaxis:{
-                            renderer: $.jqplot.CategoryAxisRenderer,
-                        }
-                    },
-                    series:[{
-                        lineWidth:2,
-                        markerOptions:{style:'diamond',size:10},
-                        rendererOptions: {
-                            smooth: true
-                        }
-                    }]
-                });
-             });
-        $("#change_day").change(function(){
-            today = $('#change_day').val();
-            $.getJSON('/jcharthourly/{{ the_library }}/{{ start_date|default('1900-01-01') }}/{{end_date|default('2101-01-01') }}/' + today,function (data) {
-               console.log(data.output);
-            the_plot = $.jqplot('hourchart', [data.output], {
-                  title:'Average for ' + today + 's',
-                    axes:{
-                        xaxis:{
-                            renderer: $.jqplot.CategoryAxisRenderer,
-                        }
-                    },
-                    series:[{
-                        lineWidth:2,
-                        markerOptions:{style:'diamond',size:10},
-                        rendererOptions: {
-                            smooth: true
-                        }
-                    }]
-                });
-             });
-              $('#hourchart').empty();
-        });
-});
-</script>
-
-
-
 <p></p>
 <div class='row'>
     {%for subject in chooser %}
@@ -199,6 +202,7 @@ jQuery(document).ready(function() {
                $(".chart{{subject.id}}").Loadingdotdotdot("Stop");
                $('.chart{{subject.id}}').remove();
             });
+        setTimeout(function(){makeChartImage('chart{{ subject.id }}')},1000);
 });
 </script>
 
