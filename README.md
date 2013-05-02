@@ -21,7 +21,7 @@ mysql -u root -p
 
 create database refstatsdb;
 
-git clone https://github.com/Zwounds/Augur.git
+git clone https://github.com/szweibel/Augur.git
 
 pip install -r requirements.txt
 
