@@ -15,10 +15,10 @@ var today = '{{today}}'
 var makeChartImage = function(location){
     var graphicImage = $('#' + location);
     // if(graphicImage.html() == ""){ //If the image was even generated, don't generate it again
-      var divGraph = $('#' + location).jqplotToImageStr({});
-      var divElem  = $('<img/>').attr('src', divGraph);
-      // $('#' + location).empty();
-      graphicImage.html(divElem);
+    var divGraph = $('#' + location).jqplotToImageStr({});
+    var divElem  = $('<img/>').attr('src', divGraph);
+    // $('#' + location).empty();
+    graphicImage.html(divElem);
 };
 
 jQuery(document).ready(function() {
@@ -43,7 +43,6 @@ jQuery(document).ready(function() {
 <div class="header">
     <h3>Charts</h3>
 </div>
-<div id='graphicImage'></div>
 <p></p>
 <input name="charting" type="submit" value="Save as image" id='imaging' class="btn btn-search" />
     <div class="pull-right">
