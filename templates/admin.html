@@ -45,18 +45,15 @@
     </div>
     <div class="row-fluid">
       <div class="span8">
-        {%for subject in subjects %}
-        {% for library in subject.libraries %}
-            {% if the_library == library.name %}
-    {% if subject.metatag == False %}
+
 <script type="text/javascript">
-function subjectWarningDialog{{ subject.id }}()
+function subjectWarningDialog(form)
 {
 var x;
-var r=confirm("Do you really want to delete this subject?");
+var r=confirm("Do you really want to delete this?");
 if (r==true)
   {
-  jQuery("#topsub{{ subject.id }}").submit();
+  form.submit();
   }
 else
   {
@@ -64,19 +61,48 @@ else
   }
 }
 
-$(document).ready(function() {
-jQuery("#showtopsubject{{subject.id}}").hide();
-jQuery("#showtopsubjecta{{subject.id}}").hide();
+$(document).on('click', '.topsubclick, .libtrash, .choiceclick, .subsubclick, .subjectsubclick', function(){
+    var form = $(this).closest('form');
+    subjectWarningDialog(form);
+});
 
-$('#topsubclick{{subject.id}}').click(function() {
-    subjectWarningDialog{{ subject.id }}();
-});
-$('#editsubjecttop{{subject.id}}').click(function() {
-    jQuery("#showtopsubject{{subject.id}}").toggle();
-    jQuery("#showtopsubjecta{{subject.id}}").toggle();
-});
+$(document).ready(function() {
+  jQuery(".hider").hide();
+  jQuery(".hider").hide();
+
+  $(document).on('click', '.editsubjecttop', function(){
+      var hider = $(this).parents().parents().children('.hiders').children('.hider');
+      hider.toggle();
+  });
+
+  $(document).on('click', '.editsubchoice', function(){
+      var hider = $(this).parents().next('.subhiders').children('.hider');
+      hider.toggle();
+  });
+
+  $(document).on('click', '.editsubjecta', function(){
+      var hider = $(this).parents().next('.editsubhiders').children('.hider');
+      hider.toggle();
+  });
+
+  $(document).on('click', '.editchoicea', function(){
+      var hider = $(this).parents().next('.editchoiceform').children('.hider');
+      hider.toggle();
+  });
+
+  $(document).on('click', '.editlibrary', function(){
+      var hider = $(this).parents().next('.editlibraryform').children('.hider');
+      hider.toggle();
+  });
+
 });
 </script>
+
+{%for subject in subjects %}
+  {% for library in subject.libraries %}
+    {% if the_library == library.name %}
+      {% if subject.metatag == False %}
+
         <div class="span6" id='subject'>
           <form action="/admindelete" id="topsub{{subject.id}}" method="post">
             <input type="hidden" name="no" value="{{subject.id}}">
@@ -84,18 +110,18 @@ $('#editsubjecttop{{subject.id}}').click(function() {
             <div class="header">
               <h3>
                 {{ subject.name }}
-                <a name="delete" title="Delete" class='popup' href=# id='topsubclick{{subject.id}}'><i class='icon-trash icon-large'></i></a>
-            <a href='javascript:void(0)' id='editsubjecttop{{subject.id}}' title="Edit" class='popup'><i class='icon-wrench icon-large'></i></a></h3>
+                <a name="delete" title="Delete" class='popup topsubclick' href=# id='topsubclick{{subject.id}}'><i class='icon-trash icon-large'></i></a>
+            <a href='javascript:void(0)' id='editsubjecttop{{subject.id}}' title="Edit" class='editsubjecttop popup'><i class='icon-wrench icon-large'></i></a></h3>
             </form>
           </div>
-            <form action="/adminsubject" id="topsubub{{subject.id}}" class='form form-inline' method="post">
+            <form action="/adminsubject" id="topsubub{{subject.id}}" class='form form-inline hiders' method="post">
               <input type="hidden" name="no" value="{{subject.id}}">
               <input type="hidden" name="choice_no" value="0">
               <input type="hidden" name="library" value="{{the_library}}">
               <input type="hidden" value='False' name="new_subject">
               <input type="hidden" name="metatag" value="notag">
-              <input type="text" name="subject" id='showtopsubject{{subject.id}}' value="{{subject.name}}">
-              <input name="save" type="submit" value="Save" id='showtopsubjecta{{subject.id}}' class="btn btn-success" />
+              <input type="text" name="subject" class='hider' id='showtopsubject{{subject.id}}' value="{{subject.name}}">
+              <input name="save" type="submit" value="Save" id='showtopsubjecta{{subject.id}}' class="btn btn-success hider" />
             </form>
           <form action="/adminnewchoice" id="save" method="post">
             New {{ subject.name }}:
@@ -108,34 +134,21 @@ $('#editsubjecttop{{subject.id}}').click(function() {
           </form>
           <ul class="unstyled">
             {%for choice in subject.choices %}
-<script type="text/javascript">
-$(document).ready(function() {
-jQuery("#showsubchoice{{choice.id}}").hide();
-jQuery("#showsubchoicea{{choice.id}}").hide();
-$('#choiceclick{{choice.id}}').click(function() {
-jQuery("#choice{{ choice.id }}").submit();
-});
-$('#editsubchoice{{choice.id}}').click(function() {
-jQuery("#showsubchoice{{choice.id}}").toggle();
-jQuery("#showsubchoicea{{choice.id}}").toggle();
-});
-});
-</script>
 
             <form action="/admindelete" id="choice{{ choice.id }}" method="post">
               <input type="hidden" name="no" value="{{choice.id}}">
               <input type="hidden" name="table" value="tag">
               <li>
                 {{choice.choice}}
-                <a name="delete" class='popup' title='Delete' href=# id='choiceclick{{choice.id}}'><i class='icon-trash icon-large'></i></a>&nbsp;&nbsp;&nbsp;
-            <a href='javascript:void(0)' title="Edit" class='popup' id='editsubchoice{{choice.id}}'><i class='icon-wrench icon-large'></i></a></li>
+                <a name="delete" class='popup choiceclick' title='Delete' href=# id='choiceclick{{choice.id}}'><i class='icon-trash icon-large'></i></a>&nbsp;&nbsp;&nbsp;
+            <a href='javascript:void(0)' title="Edit" class='popup editsubchoice' id='editsubchoice{{choice.id}}'><i class='icon-wrench icon-large'></i></a></li>
             </form>
-            <form action="/adminnewchoice" id="editsubchoice{{choice.id}}" class='form form-inline' method="post">
+            <form action="/adminnewchoice" id="editsubchoice{{choice.id}}" class='form form-inline subhiders' method="post">
               <input type="hidden" name="no" value="{{choice.id}}">
               <input type="hidden" name="subject_id" value="{{choice.subject.id}}">
               <input type="hidden" value='False' name="new_choice">
-              <input type="text" name="choice" id='showsubchoice{{choice.id}}' value="{{ choice.choice }}">
-              <input name="save" type="submit" value="Save" id='showsubchoicea{{choice.id}}' class="btn btn-success" />
+              <input type="text" name="choice" class='hider' id='showsubchoice{{choice.id}}' value="{{ choice.choice }}">
+              <input name="save" type="submit" value="Save" id='showsubchoicea{{choice.id}}' class="hider btn btn-success" />
             </form>
             {%endfor%}
           </ul>
@@ -184,38 +197,23 @@ jQuery("#showsubchoicea{{choice.id}}").toggle();
             {%for subject in subjects %}
             {%for choice in subject.choices %}
         {% if choice.metatag == True %}
-        
-<script type="text/javascript">
-$(document).ready(function() {
-  jQuery("#showmysubject{{subject.id}}").hide();
-  jQuery("#showmysubjectanother{{subject.id}}").hide();
-$('#subjectsubclick{{subject.id}}').click(function() {
-jQuery("#subsubject{{ subject.id }}").submit();
-});
-$('#editsubjecta{{subject.id}}').click(function() {
-jQuery("#showmysubject{{subject.id}}").toggle();
-jQuery("#showmysubjectanother{{subject.id}}").toggle();
-});
-});
-</script>
-
             <form action="/admindelete" id="subsubject{{ subject.id }}" method="post">
               <dt class="unstyled"> <i class="icon-tags icon-large"></i>
                 {{choice.choice}}
                 <input type="hidden" name="table" value="subject">
                 <input type="hidden" name="no" value="{{subject.id}}">
-                <a name="delete" title="Delete" class='popup' href=# id='subjectsubclick{{subject.id}}'><i class='icon-trash'></i></a>&nbsp;&nbsp;&nbsp;
-              <a href='javascript:void(0)' id='editsubjecta{{subject.id}}' title="Edit" class='popup'><i class='icon-wrench icon-large'></i></a></li>
+                <a name="delete" title="Delete" class='popup subjectsubclick' href=# id='subjectsubclick{{subject.id}}'><i class='icon-trash'></i></a>&nbsp;&nbsp;&nbsp;
+              <a href='javascript:void(0)' id='editsubjecta{{subject.id}}' title="Edit" class='popup editsubjecta'><i class='icon-wrench icon-large'></i></a></li>
             </form>
-            
-            <form action="/adminsubject" id="editsubject{{subject.id}}" class='form form-inline' method="post">
+
+            <form action="/adminsubject" id="editsubject{{subject.id}}" class='form form-inline editsubhiders' method="post">
               <input type="hidden" name="no" value="{{subject.id}}">
               <input type="hidden" name='library' value="{{the_library}}">
               <input type="hidden" name="metatag" value="tag">
               <input type="hidden" name="choice_no" value="{{choice.id}}">
               <input type="hidden" value='False' name="new_subject">
-              <input type="text" name="subject" id='showmysubject{{subject.id}}' value="{{ subject.name }}">
-              <input name="save" type="submit" value="Save" id='showmysubjectanother{{subject.id}}' class="btn btn-success" />
+              <input type="text" name="subject" class='hider' id='showmysubject{{subject.id}}' value="{{ subject.name }}">
+              <input name="save" type="submit" value="Save" id='showmysubjectanother{{subject.id}}' class="hider btn btn-success" />
             </form>
             </dt>
             {%for choice in subject.choices %}
@@ -225,31 +223,17 @@ jQuery("#showmysubjectanother{{subject.id}}").toggle();
                 {{choice.choice}}
                 <input type="hidden" name="no" value="{{choice.id}}">
                 <input type="hidden" name="table" value="Choice">
-                <a name="delete" href=# title="Delete" class='popup' id='subsubclick{{choice.id}}'><i class='icon-trash icon-large'></i></a>&nbsp;&nbsp;&nbsp;
-              <a href='javascript:void(0)' id='editchoice{{choice.id}}' title="Edit" class='popup'><i class='icon-wrench icon-large'></i></a></li>
+                <a name="delete" href=# title="Delete" class='popup' class='subsubclick' id='subsubclick{{choice.id}}'><i class='icon-trash icon-large'></i></a>&nbsp;&nbsp;&nbsp;
+              <a href='javascript:void(0)' id='editchoice{{choice.id}}' title="Edit" class='popup editchoicea'><i class='icon-wrench icon-large'></i></a></li>
             </form>
-            <form action="/adminnewchoice" id="editchoice{{choice.id}}" class='form form-inline' method="post">
+            <form action="/adminnewchoice" id="editchoice{{choice.id}}" class='form form-inline editchoiceform' method="post">
               <input type="hidden" name="no" value="{{choice.id}}">
               <input type="hidden" name="subject_id" value="{{choice.subject.id}}">
               <input type="hidden" value='False' name="new_choice">
-              <input type="text" name="choice" id='showmychoice{{choice.id}}' value="{{ choice.choice }}">
-              <input name="save" type="submit" value="Save" id='showmychoiceanother{{choice.id}}' class="btn btn-success" />
+              <input type="text" class='hider' name="choice" id='showmychoice{{choice.id}}' value="{{ choice.choice }}">
+              <input name="save" type="submit" value="Save" id='showmychoiceanother{{choice.id}}' class="hider btn btn-success" />
             </form>
             </dd>
-
-            <script type="text/javascript">
-$(document).ready(function() {
-  jQuery("#showmychoice{{choice.id}}").hide();
-  jQuery("#showmychoiceanother{{choice.id}}").hide();
-$('#subsubclick{{choice.id}}').click(function() {
-jQuery("#subsub{{ choice.id }}").submit();
-});
-$('#editchoice{{choice.id}}').click(function() {
-jQuery("#showmychoice{{choice.id}}").toggle();
-jQuery("#showmychoiceanother{{choice.id}}").toggle();
-});
-});
-</script>
             {%endif%}
         {%endfor%}
         {%endif%}
@@ -271,45 +255,18 @@ jQuery("#showmychoiceanother{{choice.id}}").toggle();
           </form>
 <div>
             {%for library in libraries %}
-<script type="text/javascript">
-function warningDialog()
-{
-var x;
-var r=confirm("Do you really want to delete this location?");
-if (r==true)
-  {
-  jQuery("#lib{{ library.name }}").submit();
-  }
-else
-  {
-  x="!";
-  }
-}
-
-$(document).ready(function() {
-  jQuery("#show{{ library.name|replace(" ", "_") }}").hide();
-  jQuery("#showa{{ library.name|replace(" ", "_") }}").hide();
-$('#lib{{library.id}}').click(function() {
-warningDialog();
-});
-$('#edit{{library.id}}').click(function() {
-jQuery("#show{{ library.name|replace(" ", "_") }}").toggle();
-jQuery("#showa{{ library.name|replace(" ", "_") }}").toggle();
-});
-});
-</script>
             <form action="/admindelete" class='form form-inline' id="lib{{library.name}}" method="post">
               <input type="hidden" name="no" value="{{library.id}}">
               <input type="hidden" name="table" value="libraries">
                 {{library.name}}
-                <a name="delete" href=# title="Delete" class='popup' id='lib{{library.id}}'><i class='icon-trash icon-large'></i></a>&nbsp;&nbsp;&nbsp;
-              <a href='javascript:void(0)' id='edit{{library.id}}' title="Edit" class='popup'><i class='icon-wrench icon-large'></i></a>
+                <a name="delete" href=# title="Delete" class='popup' id='lib{{library.id}}'><i class='icon-trash icon-large libtrash'></i></a>&nbsp;&nbsp;&nbsp;
+              <a href='javascript:void(0)' id='edit{{library.id}}' title="Edit" class='popup editlibrary'><i class='icon-wrench icon-large'></i></a>
             </form>
-            <form action="/library" id="edit{{library.name}}" class='form form-inline' method="post">
+            <form action="/library" id="edit{{library.name}}" class='form form-inline editlibraryform' method="post">
               <input type="hidden" name="no" value="{{library.id}}">
               <input type="hidden" value='False' name="new_library">
-              <input type="text" name="library" id='show{{ library.name|replace(" ", "_") }}' value="{{library.name}}">
-              <input name="save" type="submit" value="Save" id='showa{{ library.name|replace(" ", "_") }}' class="btn btn-success" />
+              <input type="text" name="library" class='hider' id='show{{ library.name|replace(" ", "_") }}' value="{{library.name}}">
+              <input name="save" type="submit" value="Save" id='showa{{ library.name|replace(" ", "_") }}' class="hider btn btn-success" />
             </form>
             {%endfor%}
 

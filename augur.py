@@ -554,7 +554,7 @@ def admin():
 @login_required
 def promote_message(message_id):
     item = Message.query.filter_by(id=message_id).first()
-    if item.promoted == False:
+    if item.promoted is False:
         item.promoted = True
         flash('Item promoted to knowledge base!')
     else:
@@ -580,7 +580,7 @@ def edit_message(message_id):
             title = request.form['title']
         new_tags = request.form.getlist('tags')
         for tag in new_tags:
-            if tag == None:
+            if tag is None:
                 continue
             a = Choice.query.filter_by(choice=tag).first()
             all_tags.append(a)
@@ -603,8 +603,7 @@ def edit_message(message_id):
     item = Message.query.filter_by(id=message_id).first()
     subjects = Subject.query.order_by(Subject.name)
     choices = Choice.query.order_by(Choice.choice.desc())
-    return render_template('edit_entry.html', subjects=subjects, the_library=the_library,
-     choices=choices, message=item)
+    return render_template('edit_entry.html', subjects=subjects, the_library=the_library, choices=choices, message=item)
 
 
 # Show a single post
