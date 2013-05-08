@@ -21,20 +21,37 @@ function updateClock ( )
 
  }
 
-$(document).ready(function()
-{
-    $('#new_message_submit').click(function(event) {
-    event.preventDefault();
-    $('#new_message_form').submit();
-    });
-    setInterval('updateClock()', 1000);
-    $('#clock').click(function() {
-        jQuery("#clock").removeAttr('id');
+$(document).ready(function(){
+    $(document).on('click', '.messageclick', function(){
+        var form = $(this).closest('form');
+        form.submit();
     });
 
-    $('#clearing').click(function(event){
-        $(".chzn-select").val('').trigger("liszt:updated");
+    $(document).on('click', '.eventclick', function(){
+        var form = $(this).next('form');
+        form.submit();
     });
+
+    jQuery("#chosen").chosen();
+    jQuery("#chosen2").chosen();
+    jQuery("#editor").ckeditor(function(){},{height:120});
+    $(".selector").change(function() {
+        var $value = $(this).val();
+        var $title = $(this).children('option[value='+$value+']').html();
+        $('#library').val($title);
+        });
+        $('#new_message_submit').click(function(event) {
+        event.preventDefault();
+        $('#new_message_form').submit();
+        });
+        setInterval('updateClock()', 1000);
+        $('#clock').click(function() {
+            jQuery("#clock").removeAttr('id');
+        });
+
+        $('#clearing').click(function(event){
+            $(".chzn-select").val('').trigger("liszt:updated");
+        });
 
     $('#main-form').click(function(event){
         event.preventDefault();
@@ -161,14 +178,7 @@ $(document).ready(function()
                             <a href="../tag/{{ tag.id }}" >{{ tag.choice }}</a> ·
                             {% endfor %}
             {{ event.time | friendly_time }}
-                            <a name="delete" href=# id='eventclick{{event.id}}'> <i class='icon-trash icon-large'></i>
-<script type="text/javascript">
-$(document).ready(function() {
-$('#eventclick{{event.id}}').click(function() {
-jQuery("#event{{ event.id }}").submit();
-});
-});
-</script>
+                            <a name="delete" href=# class='eventclick' id='eventclick{{event.id}}'> <i class='icon-trash icon-large'></i>
                                 <form action="/admindelete" class='form form-inline' id="event{{ event.id }}" method="post">
                                     <input type="hidden" name="no" value="{{ event.id }}">
                                     <input type="hidden" name="table" value="questions"></a>
@@ -192,14 +202,6 @@ jQuery("#event{{ event.id }}").submit();
     {% if message.show == True %}
     {% for library in message.libraries %}
     {% if the_library_id == library.id %}
-
-<script type="text/javascript">
-$(document).ready(function() {
-$('#messageclick{{message.id}}').click(function() {
-jQuery("#message{{ message.id }}").submit();
-});
-});
-</script>
                 <div>
                     <div>
                         <form action="/admindelete" id="message{{ message.id }}" method="post">
@@ -229,7 +231,7 @@ jQuery("#message{{ message.id }}").submit();
                                     <a href="/edit/{{ message.id }}" title="Edit" class='pull-right popup'>
                                         <i class="icon-wrench icon-large"></i>
                                     </a>
-                                    <a name="delete" href=# title="Delete" class='pull-right popup' id='messageclick{{message.id}}'>
+                                    <a name="delete" href=# title="Delete" class='pull-right popup messageclick' id='messageclick{{message.id}}'>
                                         <i class='icon-trash icon-large'></i>
                                     </a>
                                 </p>
@@ -239,7 +241,7 @@ jQuery("#message{{ message.id }}").submit();
                                     <i class="icon-wrench"></i>
                                 </a>
                                 &nbsp;&nbsp;&nbsp;
-                                <a name="delete" title="Delete" class='pull-right popup' href=# id='messageclick{{message.id}}'>
+                                <a name="delete" title="Delete" class='pull-right popup messageclick' href=# id='messageclick{{message.id}}'>
                                     <i class='icon-trash icon-large'></i>
                                 </a>
                             </p>
@@ -281,14 +283,6 @@ jQuery("#message{{ message.id }}").submit();
 
 <script type="text/javascript">
     jQuery(document).ready(function(){
-      jQuery("#chosen").chosen();
-      jQuery("#chosen2").chosen();
-      jQuery("#editor").ckeditor(function(){},{height:120});
-      $(".selector").change(function() {
-        var $value = $(this).val();
-        var $title = $(this).children('option[value='+$value+']').html();
-        $('#library').val($title);
-    });
     });
 </script>
 </div>
