@@ -159,6 +159,14 @@ LOGIC
 """
 
 
+# Generate a list of days
+def perdelta(start, end, delta):
+    curr = start
+    while curr < end:
+        yield curr
+        curr += delta
+
+
 # Gets messages to display on the Homepage
 def get_messages():
     test = Message.query.order_by(Message.id.desc())
@@ -176,7 +184,7 @@ def get_messages():
 # Set a message to no longer show up on the front page
 def expire_messages(no):
     expiring = Message.query.filter_by(id=no).first()
-    if expiring.show == True:
+    if expiring.show:
         expiring.show = False
     db.session.commit()
 
@@ -336,15 +344,22 @@ def jchart(library, start_date, end_date):
         result = db.session.query(Event).filter(Event.time.between(start_date, end_date)).order_by(Event.time)
     else:
         result = db.session.query(Event).filter(Event.time.between(start_date, end_date)).filter_by(library=chosen_library).order_by(Event.time)
+    days = []
+    # using function to generate a list of dates
+    for day in perdelta(start_date, end_date, timedelta(days=1)):
+        days.append(day)
+
     events = [x.time for x in result]
-    event_days = []
     events = sorted(events)
     data = []
 
     event_days = [datetime.date(event) for event in events]
     counted = dict(Counter(event_days))
+    for date in days:
+        if date not in counted:
+            counted[date] = 0
     for key in sorted(counted.iterkeys()):
-        formatted_key = key.strftime("%Y-%m-%d %H:%M:%S")
+        formatted_key = key.strftime("%Y-%m-%d")
         item = [formatted_key, counted[key]]
         data.append(item)
 
