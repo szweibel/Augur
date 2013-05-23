@@ -174,7 +174,6 @@ jQuery(document).ready(function() {
                 "maxDots": 4
             });
     $.getJSON('/jchartpie/{{ the_library }}/{{ subject.id }}/{{ start_date|default('1900-01-01') }}/{{end_date|default('2101-01-01') }}',function (data) {
-               console.log(data.output);
                $.jqplot('chart{{ subject.id }}', [data.output],
                 {
                     title:'By {{subject.name}}',
@@ -197,17 +196,30 @@ jQuery(document).ready(function() {
                     },
                      }
                 });
-               $(".chart{{subject.id}}").Loadingdotdotdot("Stop");
-               $('.chart{{subject.id}}').remove();
+              var $totals = $('#totals{{ subject.id }}');
+              var theSubject = '{{subject.name}}';
+              // $totals.append('<p>' + theSubject + '</p>');
+
+              $.each(data.output, function() {
+                var choice = this[0];
+                var number = this[1];
+                $totals.append('<p>' + choice + ': ' + number + '</p>');
+              });
+
+              var thisChart = $(".chart{{subject.id}}");
+              thisChart.Loadingdotdotdot("Stop");
+              thisChart.remove();
             });
         setTimeout(function(){makeChartImage('chart{{ subject.id }}')},1000);
 });
 </script>
-
-    <div class='span4' id='chart{{subject.id}}'></div>
+  <div class='span4' id='totals{{ subject.id }}'>
+    <div id='chart{{subject.id}}'></div>
+  </div>
     {% endif %}
 {% endfor %}
 {% endif %}
 {% endfor %}
+
 </div>
 {% endblock %}

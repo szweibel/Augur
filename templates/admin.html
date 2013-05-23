@@ -47,7 +47,7 @@
       <div class="span8">
 
 <script type="text/javascript">
-function subjectWarningDialog(form)
+function warningDialog(form)
 {
 var x;
 var r=confirm("Do you really want to delete this?");
@@ -63,7 +63,7 @@ else
 
 $(document).on('click', '.topsubclick, .libtrash, .choiceclick, .subsubclick, .subjectsubclick', function(){
     var form = $(this).closest('form');
-    subjectWarningDialog(form);
+    warningDialog(form);
 });
 
 $(document).ready(function() {
