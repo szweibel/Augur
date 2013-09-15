@@ -68,7 +68,7 @@ $(document).on('click', '.topsubclick, .libtrash, .choiceclick, .subsubclick, .s
 
 $(document).ready(function() {
   jQuery(".hider").hide();
-  jQuery(".hider").hide();
+  // jQuery(".hider").hide();
 
   $(document).on('click', '.editsubjecttop', function(){
       var hider = $(this).parents().parents().children('.hiders').children('.hider');
@@ -94,6 +94,7 @@ $(document).ready(function() {
       var hider = $(this).parents().next('.editlibraryform').children('.hider');
       hider.toggle();
   });
+  
 
 });
 </script>

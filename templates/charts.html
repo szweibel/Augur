@@ -11,6 +11,7 @@
 <script type="text/javascript" src="{{url_for('static', filename='daterange/bootstrap-datepicker.js')}}"></script>
 
 <script type="text/javascript">
+var categories = []
 var today = '{{today}}'
 var makeChartImage = function(location){
     var graphicImage = $('#' + location);
@@ -22,10 +23,6 @@ var makeChartImage = function(location){
 };
 
 jQuery(document).ready(function() {
-
-    $('#imaging').click(function() {
-        makeChartImage('chart');
-    });
 
     $('#reportrange').datepicker({
         noOffset: false,
@@ -64,7 +61,6 @@ jQuery(document).ready(function() {
 
         $(document).ready(function(){
            $.getJSON('/jchartevents/{{ the_library }}/{{ start_date|default('1900-01-01') }}/{{end_date|default('2101-01-01') }}',function (data) {
-               console.log(data.output);
                $.jqplot('chart', [data.output], {
                     title:'Questions Asked',
                     axes:{
@@ -85,7 +81,6 @@ jQuery(document).ready(function() {
                 });
             });
            $.getJSON('/jchartweekly/{{ the_library }}/{{ start_date|default('1900-01-01') }}/{{end_date|default('2101-01-01') }}',function (data) {
-              console.log(data.output);
              $.jqplot('weekchart', [data.output], {
                    title:'Average, Weekly',
                    axes:{
@@ -103,7 +98,6 @@ jQuery(document).ready(function() {
                });
            });
            $.getJSON('/jcharthourly/{{ the_library }}/{{ start_date|default('1900-01-01') }}/{{end_date|default('2101-01-01') }}/' + today,function (data) {
-              console.log(data.output);
            the_plot = $.jqplot('hourchart', [data.output], {
                  title:'Average for {{today}}s',
                    axes:{
@@ -123,7 +117,6 @@ jQuery(document).ready(function() {
            $("#change_day").change(function(){
                today = $('#change_day').val();
                $.getJSON('/jcharthourly/{{ the_library }}/{{ start_date|default('1900-01-01') }}/{{end_date|default('2101-01-01') }}/' + today,function (data) {
-                  console.log(data.output);
                the_plot = $.jqplot('hourchart', [data.output], {
                      title:'Average for ' + today + 's',
                        axes:{
@@ -143,7 +136,7 @@ jQuery(document).ready(function() {
                  $('#hourchart').empty();
                  setTimeout(function(){makeChartImage('hourchart')},300);
            });
-           setTimeout(function(){makeChartImage('chart'), makeChartImage('hourchart'), makeChartImage('weekchart')},1000);
+           // setTimeout(function(){makeChartImage('chart'), makeChartImage('hourchart'), makeChartImage('weekchart')},1000);
        });
 </script>
 
@@ -166,60 +159,114 @@ jQuery(document).ready(function() {
         {% if subject.metatag == False %}
         {% for library in subject.libraries %}
             {% if the_library == library.name %}
-    <div class='span5 chart{{ subject.id }} '></div>
-    <script type="text/javascript">
-jQuery(document).ready(function() {
-    $(".chart{{subject.id}}").Loadingdotdotdot({
-                "speed": 400,
-                "maxDots": 4
-            });
-    $.getJSON('/jchartpie/{{ the_library }}/{{ subject.id }}/{{ start_date|default('1900-01-01') }}/{{end_date|default('2101-01-01') }}',function (data) {
-               $.jqplot('chart{{ subject.id }}', [data.output],
-                {
-                    title:'By {{subject.name}}',
-                    seriesDefaults: {
-                // Make this a pie chart.
-                    renderer: jQuery.jqplot.PieRenderer,
-                    rendererOptions: {
-                // Put data labels on the pie slices.
-                // By default, labels show the percentage of the slice.
-                    showDataLabels: true,
-                    fill: true,
-                                }
-                            },
-                legend: { show:true,
-                    location: 'e',
-                    fontSize: 10,
-                    /*placement: 'outside',*/
-                    rendererOptions: {
-                /*numberRows: 4*/
-                    },
-                     }
-                });
-              var $totals = $('#totals{{ subject.id }}');
-              var theSubject = '{{subject.name}}';
-              // $totals.append('<p>' + theSubject + '</p>');
-
-              $.each(data.output, function() {
-                var choice = this[0];
-                var number = this[1];
-                $totals.append('<p>' + choice + ': ' + number + '</p>');
-              });
-
-              var thisChart = $(".chart{{subject.id}}");
-              thisChart.Loadingdotdotdot("Stop");
-              thisChart.remove();
-            });
-        setTimeout(function(){makeChartImage('chart{{ subject.id }}')},1000);
-});
+<script type="text/javascript">
+    categories.push({
+      library: "{{the_library}}",
+      subjectId: "{{subject.id}}",
+      subjectName: "{{subject.name}}",
+      startDate: "{{ start_date|default('1900-01-01') }}",
+      endDate: "{{end_date|default('2101-01-01') }}",
+      divLocation: "chart{{subject.id}}"
+    });
 </script>
+
+<div class='chart{{ subject.id }} '>
   <div class='span4' id='totals{{ subject.id }}'>
     <div id='chart{{subject.id}}'></div>
   </div>
-    {% endif %}
+</div>
+  {% endif %}
 {% endfor %}
 {% endif %}
 {% endfor %}
 
+<script type="text/javascript">
+jQuery(document).ready(function() {
+    console.log(categories);
+  $.each(categories, function() {
+    var name = this.subjectName;
+    var id = this.subjectId;
+    var library = this.library;
+    var startDate = this.startDate;
+    var endDate = this.endDate;
+    var divLocation = this.divLocation;
+    // $("#chart" + id).Loadingdotdotdot({
+    //                 "speed": 400,
+    //                 "maxDots": 4
+    //             });
+
+        $.getJSON('/jchartpie/' + library + '/' + id + '/' + startDate + '/' + endDate,function (newdata) {
+                   $('#' + divLocation).jqplot([newdata.output],
+                    {
+                        title:'By ' + name,
+                        seriesDefaults: {
+                    // Make this a pie chart.
+                        renderer: jQuery.jqplot.PieRenderer,
+                        rendererOptions: {
+                    // Put data labels on the pie slices.
+                    // By default, labels show the percentage of the slice.
+                        showDataLabels: true,
+                        fill: true,
+                                    }
+                                },
+                    legend: { show:true,
+                        location: 'e',
+                        fontSize: 10,
+                        /*placement: 'outside',*/
+                        rendererOptions: {
+                    /*numberRows: 4*/
+                        },
+                         }
+                    });
+                  var $totals = $('#totals' + id);
+
+                  $.each(newdata.output, function() {
+                    var choice = this[0];
+                    var number = this[1];
+                    $totals.append('<p>' + choice + ': ' + number + '</p>');
+                  });
+
+                  // var thisChart = $("#chart" + id);
+                  // thisChart.Loadingdotdotdot("Stop");
+                  // thisChart.remove();
+                });
+            // setTimeout(function(){makeChartImage('chart' + id)},1000);
+  });
+});
+</script>
+<!-- <div class='chart2'>
+  <div class='span4' id='totals2'>
+    <div id='chart2'></div>
+  </div>
+</div>
+<p></p>
+<p>
+<div class='chart1'>
+  <div class='span4' id='totals1'>
+    <div id='chart1'></div>
+  </div>
+</div>
+</p>
+<div class='chart3'>
+  <div class='span4' id='totals3'>
+    <div id='chart3'></div>
+  </div>
+</div>
+<div class='chart4'>
+  <div class='span4' id='totals4'>
+    <div id='chart4'></div>
+  </div>
+</div>
+<div class='chart4'>
+  <div class='span4' id='totals4'>
+    <div id='chart4'></div>
+  </div>
+</div>
+<div class='chart5'>
+  <div class='span4' id='totals5'>
+    <div id='chart5'></div>
+  </div>
+</div>
+ -->
 </div>
 {% endblock %}
