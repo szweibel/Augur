@@ -1,7 +1,7 @@
 ## Augur
 
 Augur is a webapp for tracking reference desk statistics for libraries, inspired by libstats. It was written in Python and Javascript.
-Python version 2.7 required.
+Python version 2.7.2+ required.
 
 In Ubuntu/Debian:
 
