@@ -35,7 +35,7 @@ jQuery(document).ready(function() {
         $("#chart_format").submit();
     });
     $('#CSV').click(function() {
-        $("#chart_format").attr("action", "{{ url_for('data', library_id=the_library_id) }}");
+        $("#chart_format").attr("action", "/data/{{the_library_id}}");
         $("#chart_format").submit();
     });
 });
