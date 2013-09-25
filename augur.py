@@ -493,20 +493,37 @@ def data():
         data = tablib.Dataset()
         data.headers = [subject.name for subject in subjects]
         data.headers.append(u'Time')
+        data.headers.append(u'Tags')
         data.headers = sorted(data.headers)
 
         list_for_data = []
+        cleaned_events = []
         for event in events:
-            a = {tag.subject.name: tag.choice for tag in event.choices}
+            metatags = []
+            for choice in event.choices:
+                if choice.subject.metatag == True:
+                    metatags.append(choice.choice)
+            setattr( event, 'tags', metatags )
+        for event in events:
+            a = {}
+            for choice in event.choices:
+                if choice.subject.metatag == False:
+                    a[choice.subject.name] = choice.choice
+            if hasattr(event, 'tags'):
+                a['Tags'] = " - ".join(event.tags)
+            else:
+                a['Tags'] = 'None'
             a['Time'] = str(event.time)
+            print a
             for key in data.headers:
                 if key not in a:
+                    # print key
                     a[key] = 'None'
             new_list = [a[item] for item in sorted(a.iterkeys())]
             list_for_data.append(new_list)
         for item in list_for_data:
-            print item
             data.append(item)
+        print data.json
         with open('output.csv', 'wb') as f:
             f.write(data.csv)
             f.seek(0)
