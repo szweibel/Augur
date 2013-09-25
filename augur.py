@@ -493,10 +493,19 @@ def data():
         data = tablib.Dataset()
         data.headers = [subject.name for subject in subjects]
         data.headers.append(u'Time')
+        data.headers = sorted(data.headers)
+
+        list_for_data = []
         for event in events:
-            a = [tag.choice for tag in event.choices]
-            a.append(str(event.time))
-            data.append(a)
+            a = {tag.subject.name: tag.choice for tag in event.choices}
+            a['Time'] = str(event.time)
+            for key in data.headers:
+                if key not in a:
+                    a[key] = 'None'
+            new_list = [a[item] for item in sorted(a.iterkeys())]
+            list_for_data.append(new_list)
+        for item in list_for_data:
+            data.append(item)
         with open('output.csv', 'wb') as f:
             f.write(data.csv)
             f.seek(0)
