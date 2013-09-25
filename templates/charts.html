@@ -35,7 +35,7 @@ jQuery(document).ready(function() {
         $("#chart_format").submit();
     });
     $('#CSV').click(function() {
-        $("#chart_format").attr("action", "/data/{{the_library_id}}");
+        $("#chart_format").attr("action", "/data");
         $("#chart_format").submit();
     });
 });
@@ -52,6 +52,7 @@ jQuery(document).ready(function() {
                 <input id="reportrange" value='{{start_date}}' name="start_date">
                 <label>To:</label>
                 <input id="reportrange2" value='{{end_date}}' name="end_date">
+                <input id="library_id" value='{{the_library_id}}' name="the_library_id" type='hidden'>
                 <input name="save" type="submit" value="Chart!" id='charting' class="btn btn-primary" />
                 <input name="download" type="submit" value="Save as CSV" id='CSV' class="btn btn-search" />
             </div>

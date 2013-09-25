@@ -473,9 +473,10 @@ def knowledge_base():
     return output
 
 # View for the /data page, and to create CSVs
-@app.route('/data/<a_library_id>', methods=['GET', 'POST'])
+@app.route('/data', methods=['GET', 'POST'])
 @login_required
-def data(a_library_id):
+def data():
+    a_library_id = request.cookies.get('library_id') or request.form['the_library_id']
     the_library = Library.query.filter_by(id=a_library_id).first() or Library.query.first()
     if request.method == 'POST':
         start_date = request.form['start_date']
@@ -501,7 +502,6 @@ def data(a_library_id):
             f.seek(0)
         return send_file('output.csv', 'csv', as_attachment=True)
 
-    the_library = request.cookies.get('library_name')
     events = Event.query.order_by(Event.time.desc()).limit(100)
     subjects = Subject.query.all()
     choices = Choice.query.all()
