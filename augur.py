@@ -509,7 +509,6 @@ def test():
 @login_required
 def data(library_id):
     the_library = Library.query.filter_by(id=library_id).first() or Library.query.first()
-    print "this is", the_library
     if request.method == 'POST':
         start_date = request.form['start_date']
         end_date = request.form['end_date']
