@@ -505,11 +505,11 @@ def test():
 
 
 # View for the /data page, and to create CSVs
-@app.route('/data', methods=['GET', 'POST'])
+@app.route('/data/<library_id>', methods=['GET', 'POST'])
 @login_required
-def data():
-    the_library = request.cookies.get('library_name')
-    the_library = Library.query.filter_by(name=the_library).first()
+def data(library_id):
+    the_library = Library.query.filter_by(id=library_id).first() or Library.query.first()
+    print "this is", the_library
     if request.method == 'POST':
         start_date = request.form['start_date']
         end_date = request.form['end_date']
