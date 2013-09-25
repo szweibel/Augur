@@ -472,43 +472,11 @@ def knowledge_base():
     output = render_template('knowledge_base.html', entries=entries, subjects=subjects, choices=choices)
     return output
 
-
-# TEST
-@app.route('/test', methods=['GET', 'POST'])
-@login_required
-def test():
-    if request.method == 'POST':
-        start_day = request.form['start_date']
-        if start_day == '':
-            start_day = '1900-01-01'
-        start_date = datetime.strptime(start_day, '%Y-%m-%d').date()
-        end_day = request.form['end_date']
-        if end_day == '':
-            end_day = '2100-01-01'
-        end_date = datetime.strptime(end_day, '%Y-%m-%d').date()
-        all_subjects = Subject.query.filter_by(metatag=False)
-        flash('Now showing data between %s and %s' % (str(start_date), str(end_date)))
-        return render_template('charts.html', start_date=start_day, end_date=end_day,
-         chooser=all_subjects, timechart=None)
-    DD = timedelta(days=30)
-    DA = timedelta(days=1)
-    end_date = datetime.today()
-    start_date = end_date - DD
-    end_date = end_date + DA
-    start_date = datetime.strftime(start_date, '%Y-%m-%d')
-    end_date = datetime.strftime(end_date, '%Y-%m-%d')
-    subjects = Subject.query.filter_by(metatag=False)
-    chosen_library = 'all'
-    resp = make_response(render_template('test.html', chooser=subjects,
-        subjects=None, timechart=1, library=chosen_library, start_date=start_date, end_date=end_date))
-    return resp
-
-
 # View for the /data page, and to create CSVs
-@app.route('/data/<library_id>', methods=['GET', 'POST'])
+@app.route('/data/<a_library_id>', methods=['GET', 'POST'])
 @login_required
-def data(library_id):
-    the_library = Library.query.filter_by(id=library_id).first() or Library.query.first()
+def data(a_library_id):
+    the_library = Library.query.filter_by(id=a_library_id).first() or Library.query.first()
     if request.method == 'POST':
         start_date = request.form['start_date']
         end_date = request.form['end_date']
