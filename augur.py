@@ -505,6 +505,7 @@ def data():
             new_list = [a[item] for item in sorted(a.iterkeys())]
             list_for_data.append(new_list)
         for item in list_for_data:
+            print item
             data.append(item)
         with open('output.csv', 'wb') as f:
             f.write(data.csv)
