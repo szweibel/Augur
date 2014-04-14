@@ -21,7 +21,12 @@ var makeChartImage = function(location){
     // $('#' + location).empty();
     graphicImage.html(divElem);
 };
-
+$.fn.appendAttr = function(attrName, suffix) {
+    this.attr(attrName, function(i, val) {
+        return val + suffix;
+    });
+    return this;
+  };
 jQuery(document).ready(function() {
 
     $('#reportrange').datepicker({
@@ -175,8 +180,8 @@ jQuery(document).ready(function() {
     });
 </script>
 
-<div class='chart{{ subject.id }} span4'>
-  <!-- <div class='span4' id='totals{{ subject.id }}'> -->
+<div class='chart{{ subject.id }} span4' id='totals{{ subject.id }}'>
+  <!-- <span class='span4' ></span> -->
     <div id='chart{{subject.id}}'></div>
   <!-- </div> -->
 </div>
@@ -224,13 +229,17 @@ jQuery(document).ready(function() {
                          }
                     });
                   var $totals = $('#totals' + id);
-
+                  var theTotal = {choices: []};
+                  $totals.attr('title', 'Totals:')
                   $.each(newdata.output, function() {
                     var choice = this[0];
                     var number = this[1];
-                    $totals.append('<p>' + choice + ': ' + number + '</p>');
+                    theTotal.choices.push({'choice': choice, 'number': number})
+                    console.log(choice);
+                    console.log(number);
+                    // $totals.append('<p>' + choice + ': ' + number + '</p>');
+                    $($totals).appendAttr('title', "\n"+choice + ': ' + number )
                   });
-
                   // var thisChart = $("#chart" + id);
                   // thisChart.Loadingdotdotdot("Stop");
                   // thisChart.remove();

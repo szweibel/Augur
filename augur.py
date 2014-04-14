@@ -514,16 +514,13 @@ def data():
             else:
                 a['Tags'] = 'None'
             a['Time'] = str(event.time)
-            print a
             for key in data.headers:
                 if key not in a:
-                    # print key
                     a[key] = 'None'
             new_list = [a[item] for item in sorted(a.iterkeys())]
             list_for_data.append(new_list)
         for item in list_for_data:
             data.append(item)
-        print data.json
         with open('output.csv', 'wb') as f:
             f.write(data.csv)
             f.seek(0)
