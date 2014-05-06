@@ -19,7 +19,7 @@ sudo apt-get install python-mysqldb
 
 mysql -u root -p
 
-create database refstatsdb;
+create database augurdb;
 
 git clone https://github.com/szweibel/Augur.git
 

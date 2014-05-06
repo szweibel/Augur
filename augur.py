@@ -501,14 +501,16 @@ def data():
         for event in events:
             metatags = []
             for choice in event.choices:
-                if choice.subject.metatag == True:
-                    metatags.append(choice.choice)
+                if choice.subject is not None:
+                    if choice.subject.metatag == True:
+                        metatags.append(choice.choice)
             setattr( event, 'tags', metatags )
         for event in events:
             a = {}
             for choice in event.choices:
-                if choice.subject.metatag == False:
-                    a[choice.subject.name] = choice.choice
+                if choice.subject is not None:
+                    if choice.subject.metatag == False:
+                        a[choice.subject.name] = choice.choice
             if hasattr(event, 'tags'):
                 a['Tags'] = " - ".join(event.tags)
             else:
