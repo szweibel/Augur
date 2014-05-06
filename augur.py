@@ -438,7 +438,8 @@ def jchart_hourly(library, start_date, end_date, day):
 @app.route('/jchartpie/<library>/<int:subject_id>/<start_date>/<end_date>')
 @login_required
 def jchartpie(library, subject_id, start_date, end_date):
-    subject = Subject.query.filter_by(id=subject_id).first()
+    chosen_library = Library.query.filter_by(name=library).first()
+    subject = Subject.query.filter(Subject.libraries.contains(chosen_library)).filter_by(id=subject_id).first()
     if start_date == '1900-01-01':
         DD = timedelta(days=30)
         end_date = datetime.today()
@@ -446,13 +447,14 @@ def jchartpie(library, subject_id, start_date, end_date):
     else:
         start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
         end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
-    subject_choices = [choice.choice for choice in subject.choices]
+    subject_choices = [choice.id for choice in subject.choices]
     # Query returns the number of times a Choice was made in an Event
-    counted = {(made_choice[:20] + '..') if len(made_choice) > 20 else made_choice: Event.query.join(Event.choices).filter(Event.time.between(start_date, end_date)).filter(Choice.choice == made_choice).count() for made_choice in subject_choices}
-
+    counted = { made_choice: Event.query.join(Event.choices).filter(Event.time.between(start_date, end_date)).filter(Choice.id == made_choice).count() for made_choice in subject_choices}
     data = []
     for key in sorted(counted.iterkeys()):
-        item = [key, counted[key]]
+        lookup_key = Choice.query.filter_by(id=key).first()
+        the_key = str(lookup_key.choice)
+        item = [the_key, counted[key]]
         data.append(item)
     return jsonify(output=data)
 
