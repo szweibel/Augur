@@ -448,7 +448,7 @@ def jchartpie(library, subject_id, start_date, end_date):
         end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
     subject_choices = [choice.choice for choice in subject.choices]
     # Query returns the number of times a Choice was made in an Event
-    counted = {(made_choice[:20] + '..') if len(made_choice) > 20 else made_choice: Event.query.join(Event.choices).filter(Choice.choice == made_choice).count() for made_choice in subject_choices}
+    counted = {(made_choice[:20] + '..') if len(made_choice) > 20 else made_choice: Event.query.join(Event.choices).filter(Event.time.between(start_date, end_date)).filter(Choice.choice == made_choice).count() for made_choice in subject_choices}
 
     data = []
     for key in sorted(counted.iterkeys()):
