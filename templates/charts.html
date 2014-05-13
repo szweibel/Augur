@@ -90,6 +90,7 @@ jQuery(document).ready(function() {
                     }]
                 });
             });
+           setTimeout(function(){makeChartImage('chart')},300);
            $.getJSON('/jchartweekly/{{ the_library }}/{{ start_date|default('1900-01-01') }}/{{end_date|default('2101-01-01') }}',function (data) {
              $.jqplot('weekchart', [data.output], {
                    title:'Average, Weekly',
@@ -107,6 +108,7 @@ jQuery(document).ready(function() {
                    }]
                });
            });
+            setTimeout(function(){makeChartImage('weekchart')},300);
            $.getJSON('/jcharthourly/{{ the_library }}/{{ start_date|default('1900-01-01') }}/{{end_date|default('2101-01-01') }}/' + today,function (data) {
            the_plot = $.jqplot('hourchart', [data.output], {
                  title:'Average for {{today}}s',
@@ -123,6 +125,7 @@ jQuery(document).ready(function() {
                        }
                    }]
                });
+           setTimeout(function(){makeChartImage('hourchart')},300);
             });
            $("#change_day").change(function(){
                today = $('#change_day').val();
@@ -146,7 +149,6 @@ jQuery(document).ready(function() {
                  $('#hourchart').empty();
                  setTimeout(function(){makeChartImage('hourchart')},300);
            });
-           // setTimeout(function(){makeChartImage('chart'), makeChartImage('hourchart'), makeChartImage('weekchart')},1000);
        });
 </script>
 
@@ -246,6 +248,7 @@ jQuery(document).ready(function() {
                 });
             setTimeout(function(){makeChartImage('chart' + id)},1000);
   });
+
 });
 </script>
 </div>
