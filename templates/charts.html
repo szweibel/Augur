@@ -108,7 +108,7 @@ jQuery(document).ready(function() {
                    }]
                });
            });
-            setTimeout(function(){makeChartImage('weekchart')},300);
+            setTimeout(function(){makeChartImage('weekchart')},3000);
            $.getJSON('/jcharthourly/{{ the_library }}/{{ start_date|default('1900-01-01') }}/{{end_date|default('2101-01-01') }}/' + today,function (data) {
            the_plot = $.jqplot('hourchart', [data.output], {
                  title:'Average for {{today}}s',
