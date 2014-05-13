@@ -90,7 +90,7 @@ jQuery(document).ready(function() {
                     }]
                 });
             });
-           setTimeout(function(){makeChartImage('chart')},300);
+           setTimeout(function(){makeChartImage('chart')},3000);
            $.getJSON('/jchartweekly/{{ the_library }}/{{ start_date|default('1900-01-01') }}/{{end_date|default('2101-01-01') }}',function (data) {
              $.jqplot('weekchart', [data.output], {
                    title:'Average, Weekly',
@@ -125,7 +125,7 @@ jQuery(document).ready(function() {
                        }
                    }]
                });
-           setTimeout(function(){makeChartImage('hourchart')},300);
+           setTimeout(function(){makeChartImage('hourchart')},3000);
             });
            $("#change_day").change(function(){
                today = $('#change_day').val();
@@ -147,7 +147,7 @@ jQuery(document).ready(function() {
                    });
                 });
                  $('#hourchart').empty();
-                 setTimeout(function(){makeChartImage('hourchart')},300);
+                 setTimeout(function(){makeChartImage('hourchart')},3000);
            });
        });
 </script>
@@ -246,7 +246,7 @@ jQuery(document).ready(function() {
                   // thisChart.Loadingdotdotdot("Stop");
                   // thisChart.remove();
                 });
-            setTimeout(function(){makeChartImage('chart' + id)},1000);
+            setTimeout(function(){makeChartImage('chart' + id)},2000);
   });
 
 });
