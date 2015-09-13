@@ -13,20 +13,20 @@
 <script type="text/javascript">
 var categories = []
 var today = '{{today}}'
-var makeChartImage = function(location){
-    var graphicImage = $('#' + location);
-    // if(graphicImage.html() == ""){ //If the image was even generated, don't generate it again
-    var divGraph = $('#' + location).jqplotToImageStr({});
-    var divElem  = $('<img/>').attr('src', divGraph);
-    // $('#' + location).empty();
-    graphicImage.html(divElem);
-};
-$.fn.appendAttr = function(attrName, suffix) {
-    this.attr(attrName, function(i, val) {
-        return val + suffix;
-    });
-    return this;
-  };
+// var makeChartImage = function(location){
+//     var graphicImage = $('#' + location);
+//     // if(graphicImage.html() == ""){ //If the image was even generated, don't generate it again
+//     var divGraph = $('#' + location).jqplotToImageStr({});
+//     var divElem  = $('<img/>').attr('src', divGraph);
+//     // $('#' + location).empty();
+//     graphicImage.html(divElem);
+// };
+// $.fn.appendAttr = function(attrName, suffix) {
+//     this.attr(attrName, function(i, val) {
+//         return val + suffix;
+//     });
+//     return this;
+//   };
 jQuery(document).ready(function() {
 
     $('#reportrange').datepicker({
@@ -240,7 +240,7 @@ jQuery(document).ready(function() {
                     console.log(choice);
                     console.log(number);
                     // $totals.append('<p>' + choice + ': ' + number + '</p>');
-                    $($totals).appendAttr('title', "\n"+choice + ': ' + number )
+                    // $($totals).appendAttr('title', "\n"+choice + ': ' + number )
                   });
                   // var thisChart = $("#chart" + id);
                   // thisChart.Loadingdotdotdot("Stop");
