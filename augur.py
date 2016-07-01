@@ -4,6 +4,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime
 from datetime import timedelta
+import pytz
 from flask import Flask, request, redirect, url_for, render_template, flash, make_response, jsonify, send_file
 from flask.ext.sqlalchemy import SQLAlchemy
 import flask.ext.restless
@@ -233,7 +234,8 @@ def friendly_time(dt, past_="ago",
     3 days ago, 5 hours from now etc.
     """
 
-    now = datetime.now()
+    dt = pytz.timezone('US/Eastern').localize(dt)
+    now = datetime.now(pytz.utc)
     if now > dt:
         diff = now - dt
         dt_is_past = True
