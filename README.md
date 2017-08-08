@@ -27,10 +27,10 @@ pip install -r requirements.txt
 
 Change 'settings.cfg.template' to 'settings.cfg'
 
-In settings.cfg, change the secret key to whatever you'd like, and fill in the appropriate info for Mysql.
+In settings.cfg, change the secret key to whatever you'd like, and replace <USER> and <PASSWORD> with the root username and password you use for MySQL.
 
 python manage.py restart_db
 
-sudo gunicorn -w 4 -b 0.0.0.0:5000 augur:app
+gunicorn -w 4 -b 0.0.0.0:5000 augur:app
 
-Now Augur is running on port 5000. Change the default password in manage.py line 21.
+Now Augur is running on port 5000. Default username and password in manage.py line 16.
