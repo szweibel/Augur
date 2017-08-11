@@ -5,29 +5,29 @@ Python version 2.7.2+ required.
 
 In Ubuntu/Debian:
 
-sudo apt-get install python-pip python-dev build-essential
+`sudo apt-get install python-pip python-dev build-essential`
 
-sudo pip install --upgrade pip
+`sudo pip install --upgrade pip`
 
-sudo pip install --upgrade virtualenv
+`sudo pip install --upgrade virtualenv`
 
-sudo apt-get install git
+`sudo apt-get install git`
 
-sudo apt-get install mysql-server
+`sudo apt-get install mysql-server`
 
-sudo apt-get install python-mysqldb
+`sudo apt-get install python-mysqldb`
 
-mysql -u root -p
+`mysql -u root -p`
 
-create database augurdb;
+`create database augurdb;`
 
-git clone https://github.com/szweibel/Augur.git
+`git clone https://github.com/szweibel/Augur.git`
 
-pip install -r requirements.txt
+`pip install -r requirements.txt`
 
 Change 'settings.cfg.template' to 'settings.cfg'
 
-In settings.cfg, change the secret key to whatever you'd like, and replace <USER> and <PASSWORD> with the root username and password you use for MySQL.
+In settings.cfg, change the secret key to whatever you'd like, and replace `<USER>` and `<PASSWORD>` with the root username and password you use for MySQL.
 
 python manage.py restart_db
 
