@@ -22,6 +22,7 @@ In Ubuntu/Debian:
 `mysql -u root -p`
 
 `create database augurdb;`
+
 `exit;`
 
 `git clone https://github.com/szweibel/Augur.git`
