@@ -17,9 +17,12 @@ In Ubuntu/Debian:
 
 `sudo apt-get install python-mysqldb`
 
+`sudo apt-get install libmysqlclient-dev`
+
 `mysql -u root -p`
 
 `create database augurdb;`
+`exit;`
 
 `git clone https://github.com/szweibel/Augur.git`
 
